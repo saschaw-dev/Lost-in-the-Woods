@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ef881b5d5113045874ca7c5b59dda3, type: 3}
+  m_Name: 2Axe
+  m_EditorClassIdentifier: 
+  itemName: axe
+  itemLabel: Axt
+  sprite: {fileID: 21300000, guid: 4075c4781bb5c9f48ab67a0c9e82ec64, type: 3}
+  picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
+  prefab: {fileID: 1109927569504214, guid: 6afee58b2f8d3eb47a3325cce6c17c0f, type: 2}
+  equiped: 1
+  filling: 0
+  damage: 0
+  blockDamage: 1
+  useAnimation: {fileID: 0}
+  useAnima: {fileID: 7400000, guid: 5eb29252afc4fb84ba02b07340195bef, type: 2}
+  useSound: {fileID: 0}
+  itemNumber: 2
+  craftingSpeed: 20
+  craftingText: '5 Holz,
+
+    3 Steine,
+
+    2 Fasern.'
+  ingredient1: 10
+  ingredient2: 6
+  ingredient3: 4
+  units1: 5
+  units2: 3
+  units3: 2
+  isBuildItem: 0

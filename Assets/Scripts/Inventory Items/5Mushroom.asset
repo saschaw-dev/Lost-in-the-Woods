@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ef881b5d5113045874ca7c5b59dda3, type: 3}
+  m_Name: 5Mushroom
+  m_EditorClassIdentifier: 
+  itemName: Mushroom
+  itemLabel: Pilz
+  sprite: {fileID: 21300000, guid: 908d2a9ec6a119f46be79b8c1ddbda3f, type: 3}
+  picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
+  prefab: {fileID: 1585967021637106, guid: 8d89ce70e271aa84889a292bb01c737f, type: 2}
+  equiped: 1
+  filling: 20
+  damage: 10
+  blockDamage: 0
+  useAnimation: {fileID: 0}
+  useAnima: {fileID: 0}
+  useSound: {fileID: 8300000, guid: d2258698be8e1634cb4c471e15b445a0, type: 3}
+  itemNumber: 5
+  craftingSpeed: 0
+  craftingText: 
+  ingredient1: 0
+  ingredient2: 0
+  ingredient3: 0
+  units1: 0
+  units2: 0
+  units3: 0
+  isBuildItem: 0

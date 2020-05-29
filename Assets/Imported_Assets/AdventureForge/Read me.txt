@@ -1,0 +1,22 @@
+Read me
+PBR Mushroom Pack Lite
+
+PBR Mushroom Pack Lite contains 4 different mushrooms as a sample of our full version PBR Mushrom Pack. 
+The textures are PBR and ready for use with Unity’s standard shader. In the full version you also get prefabs
+with ready LOD system setup.
+
+All textures are placed in an atlas and includes Albedo, Specular/Smoothness and Normal with texture atlas in 1k.
+
+
+Average triangles: 400.
+Average verts: 340.
+Texture atlas size: 1024 px.
+
+Nice to know:
+Every FBX got one single Smoothing Group for optimization. “Generate Lightmap” is enabled in every FBX, 
+and “Import Materials” is disabled. Enabling “Import Materials” will give you an extra material folder 
+below each mushroom type folder and might cause disorder in your project folder. No FBX has 
+“Generate Colliders” enabled. Every prefab is set to Static.
+
+If you got any problem, suggestion or questions please contact us on:
+support@adventureforgestudio.com 

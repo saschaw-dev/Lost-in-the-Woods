@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 46400f041b151d249bac595a3e910d79
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - craftableItem: {fileID: 11400000, guid: 00155effb7f29344eaff3f5edf680c83, type: 2}
+  - error: {instanceID: 0}
+  - craftingSound: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

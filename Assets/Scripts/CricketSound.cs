@@ -1,0 +1,21 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CricketSound : NightSound
+{
+    // Use this for initialization
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        dayAndNightControl = GameObject.Find("Day and Night Controller").GetComponent<DayAndNightControl>();
+        base.waitTimeInSeconds = 10f;
+        base.StartCoroutine("playSoundEffectInLoop");
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
+}
