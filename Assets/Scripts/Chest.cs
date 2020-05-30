@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Klasse regelt die Interaktion mit einer Truhe //
+
 public class Chest : MonoBehaviour {
 
     GameObject handSymbol;

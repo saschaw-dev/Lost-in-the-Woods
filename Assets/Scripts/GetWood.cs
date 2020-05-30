@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
+// Klasse regelt das Abbauen und Aufnehmen von Holz //
+
 public class GetWood : PickableObject {
 
     
@@ -46,7 +48,7 @@ public class GetWood : PickableObject {
     {
         if (Input.GetMouseButtonDown(0) && !stoneAxeAnim.isPlaying)
         {
-                PickUp(myCamera.ScreenPointToRay(crosshairPos.position));
+            PickUp(myCamera.ScreenPointToRay(crosshairPos.position));
         }
         if (Input.GetKeyDown(KeyCode.Delete)) {
             DisableText();
@@ -64,43 +66,32 @@ public class GetWood : PickableObject {
             {
                 if (equipedAxe.activeSelf==true)
                 {
-
                     text.enabled = false;
                     Outcome -= 1;
 
                     if (inventoryItem.picSound != null)
                     {
                         AudioSource.PlayClipAtPoint(inventoryItem.picSound, player.transform.position);
-
                     }
                     if (Outcome == 6)
                     {
                         AudioSource.PlayClipAtPoint(treeFall, player.transform.position);
                         fallingTree.Play();
-
                     }if (Outcome <= 0)
                     {
-
                         GameObject.Destroy(gameObject);
                         for (int i = 0; i < 6; i++)
                         {
                             woodLog[i].SetActive(true);
                         }
-                        
-
                     }
-
-
                 }
                 else
                 {
                     text.enabled = true;
                     text.text = tipText;
                 }
-
-
             }
-
         }
     }
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Klasse regelt das Abbauen und Aufnehmen von Blättern //
+
 public class GetLeave : PickableObject
 { //Dieses Skript wird den Sträuchern angehängt
 
@@ -52,7 +54,6 @@ public class GetLeave : PickableObject
         }
 
         //Hand-Cursor wird sichtbar, wenn man mit der Maus über einem Objekt ist, das man aufheben kann
-
         ray2 = myCamera.ScreenPointToRay(crosshairPos.position);//Schicke jeden Frame einen Strahl raus
 
         if (Physics.Raycast(ray2, out hit2, 5))//hat dieser Strahl etwas getroffen?

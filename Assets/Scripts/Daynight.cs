@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Klasse regelt den Tag- und Nachtzyklus //
+
 public class Daynight : MonoBehaviour {
 
     public Material[] sky = new Material[24]; //erzeugt einen neuen Array für die Skytextures

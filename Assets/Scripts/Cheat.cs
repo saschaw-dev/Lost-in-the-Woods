@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Klasse regelt die Eingabe und Verarbeitung von Cheat-Befehlen //
+
 public class Cheat : MonoBehaviour {
 
     PlayerSpawning playerSpawning;

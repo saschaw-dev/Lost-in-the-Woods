@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class ItemUse : MonoBehaviour {//Item Use Skript wird jedem Equiped GO angehängt
+// Klasse regelt die Nutzung / den Verbrauch von Gegenständen in der Spielerhand //
+
+public class ItemUse : MonoBehaviour {
 
     GameObject player;
     GameObject hand;

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+// Klasse regelt das Draggen von Itempics im InventarUI //
+
 public class DragItem : MonoBehaviour, IDragHandler, IEndDragHandler {
 
     RectTransform panelRectTransform;

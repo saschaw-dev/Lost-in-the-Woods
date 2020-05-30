@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+// Klasse regelt das Droppen von Inventarpics //
+
 public class DropItem : MonoBehaviour, IDropHandler {
 
     Inventory playerInventory;
@@ -152,8 +154,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
                     }
                 }
             }
-        }
-        
+        }       
     }
 
     private bool isInChestRectTransform()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Klasse regelt die Interaktion mit dem Campfeuer //
+// Klasse regelt die Interaktion mit einem Campfeuer //
 
 public class CampFire : MonoBehaviour {
 
