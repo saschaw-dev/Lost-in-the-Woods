@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Basisklasse für alle aufnehmbaren Objekte in der Szene //
+
 public class PickableObject : MonoBehaviour {
 
     protected GameObject crosshair;
@@ -21,10 +23,6 @@ public class PickableObject : MonoBehaviour {
     public Inventory myInventory;
     public Image handCursor;
     public Image crosshairImage;
-
-
-
-    
 
     public virtual void PickUp(Ray ray)
     {

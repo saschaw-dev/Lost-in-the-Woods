@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Klasse regelt die Ausdauerverwaltung des Spielers //
+
 public class PlayerStamina : StaminaController {
 
     public static Image staminaBar;
-
     public GameObject staminaSprite;
 
     // Use this for initialization
@@ -14,7 +15,6 @@ public class PlayerStamina : StaminaController {
     {
         staminaSprite = GameObject.Find("Stamina");
         staminaBar = staminaSprite.GetComponent<Image>();
-
     }
 
 

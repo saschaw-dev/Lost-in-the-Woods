@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+// Klasse regelt die Interaktion mit dem Hauptmenü //
+
 public class MainMenu : MonoBehaviour {
 
     GameObject info;
@@ -34,7 +36,6 @@ public class MainMenu : MonoBehaviour {
     public void StartGame()
     {
         SceneManager.LoadScene("LS_Scene");
-
     }
 
     public void ShowInfo()
@@ -50,6 +51,7 @@ public class MainMenu : MonoBehaviour {
     {
         Application.Quit();
     }
+
     public void Back()
     {
         info.SetActive(false);
@@ -61,8 +63,8 @@ public class MainMenu : MonoBehaviour {
 
     public void BackToMainMenu()
     {
-        //hier müssten eig noch vorher Daten gespeichert werden die sonst
-        //beim Laden der neuen Szene verloren gehen!!!
+        /*hier müssten eigentlich vorher noch Daten gespeichert werden, die sonst
+        beim Laden der neuen Szene verloren gehen!!! */
         SceneManager.LoadScene("mainmenu");
     }
 }

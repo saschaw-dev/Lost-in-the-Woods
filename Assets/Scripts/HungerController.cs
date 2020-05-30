@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;     //Einbinden des Namespaces mit den UI Klassen Image etc.
+using UnityEngine.UI;
+
+// Klasse regelt die Hungerverwaltung des Spielers //
 
 public class HungerController : MonoBehaviour
 {

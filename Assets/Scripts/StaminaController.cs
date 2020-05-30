@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Basisklasse für die Ausdauerverwaltung aller SCs und NSCs im Spiel //
 
 public class StaminaController : MonoBehaviour {
 

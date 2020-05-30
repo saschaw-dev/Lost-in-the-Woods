@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Klasse regelt das Pausieren des Spiels //
+
 public class PauseGame : MonoBehaviour {
 
     public static bool isPaused = false;
