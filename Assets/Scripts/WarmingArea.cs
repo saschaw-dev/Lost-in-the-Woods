@@ -27,7 +27,6 @@ public class WarmingArea : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        fireWarming();
 	}
 
     private void OnTriggerEnter(Collider other)
