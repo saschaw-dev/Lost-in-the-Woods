@@ -15,10 +15,12 @@ public class WolfAI : MonoBehaviour {
     public float attackDistance = 5f;
     public float lookSpeed = 1f;
     public NavMeshAgent agent;
+    public float waitTimeInSeconds = 5f;
     /////////////////////////////////////////
     float distance = 0f;
     Vector3 playerDir;
     Quaternion lookRot;
+    bool isStillWaiting = false;
 
     // Use this for initialization
     void Start () {
@@ -47,9 +49,19 @@ public class WolfAI : MonoBehaviour {
         else
         {
             animator.SetBool("isAttacking", false);
-            animator.SetBool("isRunning", false);
-            agent.isStopped = true;
-            wander();
+            if (animator.GetBool("isRunning")) {
+                agent.isStopped = true;
+                animator.SetBool("isRunning", false);
+                StartCoroutine("WaitRndTime");
+            }
+            if (!animator.GetBool("isWalking") && !isStillWaiting)
+            {
+                StartCoroutine("Wander");
+            }
+            if (agent.isStopped || agent.remainingDistance == 0f)
+            {
+                animator.SetBool("isWalking", false);
+            }
         }
     }
 
@@ -70,9 +82,23 @@ public class WolfAI : MonoBehaviour {
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * lookSpeed);
     }
 
-    void wander()
+    protected IEnumerator Wander()
     {
-        //agent.isStopped = false;
+        isStillWaiting = true;
+        int waitTime = Random.Range(10, 20);
+        yield return new WaitForSeconds(waitTime);
+        print("I waited for " + waitTime + "sec");
+        isStillWaiting = false;
+        NavMeshPath path = new NavMeshPath();
+        Vector3 rndPos = getRndPos();
+        while (!agent.CalculatePath(rndPos, path))
+        {
+            rndPos = getRndPos();
+        }
+        agent.SetDestination(rndPos);
+        animator.SetBool("isWalking", true);
+        agent.isStopped = false;
+        agent.SetDestination(getRndPos());
     }
     
     void hunt()
@@ -80,5 +106,17 @@ public class WolfAI : MonoBehaviour {
         agent.isStopped = false;
         animator.SetBool("isRunning", true);
         agent.SetDestination(playerPos);
+    }
+
+    protected IEnumerator WaitRndTime()
+    {
+        int waitTime = Random.Range(10, 20);
+        yield return new WaitForSeconds(waitTime);
+        print("I waited for " + waitTime + "sec");
+    }
+
+    Vector3 getRndPos()
+    {
+        return new Vector3(transform.position.x + Random.Range(-80f, 80f), transform.position.y, transform.position.z + Random.Range(-80f, 80f));
     }
 }
