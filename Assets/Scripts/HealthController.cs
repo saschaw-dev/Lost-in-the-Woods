@@ -10,9 +10,6 @@ public class HealthController : MonoBehaviour {
     //Health unterscheidet sich nach Objekt (z.B. kann Spieler eine andere Gesundheit haben als Npc)
     public float health = 100;
     
-
-  
-
 	// Use this for initialization
 	void Start () {
         

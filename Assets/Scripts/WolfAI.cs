@@ -11,16 +11,22 @@ public class WolfAI : MonoBehaviour {
     Vector3 playerPos;
     GameObject playerGO;
     // Inspektorvariablen/////////////////////
-    public float lookDistance = 20f;
-    public float attackDistance = 5f;
-    public float lookSpeed = 1f;
+    public float lookDistance;
+    public float attackDistance;
+    public float lookSpeed;
     public NavMeshAgent agent;
-    public float waitTimeInSeconds = 5f;
+    public float waitTimeInSeconds;
+    public float attackPoints;
+    public float runningSpeed;
+    public float walkingSpeed;
     /////////////////////////////////////////
     float distance = 0f;
     Vector3 playerDir;
     Quaternion lookRot;
     bool isStillWaiting = false;
+    WolfHealth wolfHealth;
+    PlayerHealth playerHealth;
+    Player player;
 
     // Use this for initialization
     void Start () {
@@ -28,17 +34,23 @@ public class WolfAI : MonoBehaviour {
         playerGO = GameObject.FindWithTag("Player");
         agent = GetComponent<NavMeshAgent>();
         agent.Warp(transform.position);
+        wolfHealth = GetComponent<WolfHealth>();
+        player = playerGO.GetComponent<Player>();
+        playerHealth = player.GetComponent<PlayerHealth>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
         playerPos = playerGO.transform.position;
         distance = Vector3.Distance(transform.position, playerPos);
+        if (wolfHealth.wolfHealth <= 0)
+        {
+            dying();
+        }
         if (distance <= attackDistance)
         {
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isRunning", false);
             agent.isStopped = true;
+            lookAtPlayer();
             attack();
         } else if (distance <= lookDistance)
         {
@@ -67,7 +79,11 @@ public class WolfAI : MonoBehaviour {
 
     void attack()
     {
-        animator.SetBool("isAttacking", true);
+        if (!animator.GetBool("isAttacking"))
+        {
+            animator.SetBool("isAttacking", true);
+        }
+        playerHealth.Damaging(attackPoints * Time.deltaTime);
     }
 
     void lookAtPlayer()
@@ -87,7 +103,6 @@ public class WolfAI : MonoBehaviour {
         isStillWaiting = true;
         int waitTime = Random.Range(10, 20);
         yield return new WaitForSeconds(waitTime);
-        print("I waited for " + waitTime + "sec");
         isStillWaiting = false;
         NavMeshPath path = new NavMeshPath();
         Vector3 rndPos = getRndPos();
@@ -95,6 +110,7 @@ public class WolfAI : MonoBehaviour {
         {
             rndPos = getRndPos();
         }
+        agent.speed = walkingSpeed;
         agent.SetDestination(rndPos);
         animator.SetBool("isWalking", true);
         agent.isStopped = false;
@@ -105,14 +121,30 @@ public class WolfAI : MonoBehaviour {
     {
         agent.isStopped = false;
         animator.SetBool("isRunning", true);
+        agent.speed = runningSpeed;
         agent.SetDestination(playerPos);
+    }
+
+    void dying()
+    {
+        // Deaktiviere andere Animationen
+        animator.SetBool("isAttacking", false);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isRunning", false);
+        // Starte isDying Animation
+        animator.SetBool("isDying", true);
+        agent.isStopped = true;
+    }
+
+    public void getHit(InventoryItem weapon)
+    {
+        wolfHealth.Damaging(weapon.damage);
     }
 
     protected IEnumerator WaitRndTime()
     {
         int waitTime = Random.Range(10, 20);
         yield return new WaitForSeconds(waitTime);
-        print("I waited for " + waitTime + "sec");
     }
 
     Vector3 getRndPos()

@@ -14,8 +14,12 @@ public class ItemUse : MonoBehaviour {
     AudioSource myAudioSource;
     AudioClip myAudioClip;
     Transform playerPos;
+    RaycastHit hit;
+    Ray ray;
     Image handImage;
     Build buildScript;
+    Camera myCamera;
+    Transform crosshairPos;
     WaitForSeconds breakTime = new WaitForSeconds(3);
 
     public Animation myAnimation;
@@ -41,6 +45,8 @@ public class ItemUse : MonoBehaviour {
         myAudioSource = GetComponent<AudioSource>();
         myAudioClip = ip.useSound;
         buildScript = player.GetComponentInChildren<Build>();
+        myCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        crosshairPos = GameObject.Find("Crosshair").GetComponent<Transform>();
     }
 
     // Update is called once per frame
@@ -51,6 +57,13 @@ public class ItemUse : MonoBehaviour {
         if (switcher)
         {
             OnStackIsUsed();
+        }
+        if (Physics.Raycast(ray, out hit, 1)) // Hat der Strahl etwas getroffen?
+        {
+            if (hit.collider.gameObject.GetComponent<WolfAI>() != null)
+            {
+                hit.collider.gameObject.GetComponent<WolfAI>().getHit(ip);
+            }
         }
     }
     
@@ -82,6 +95,10 @@ public class ItemUse : MonoBehaviour {
                 this.playerInventory.UseItem(ip);
                 OnAllUnitsAreUsed(ip);
                 switcher = true;//Schalter an
+            }
+            if (ip.damage > 0) // falls es sich um eine Waffe handelt
+            {
+                ray = myCamera.ScreenPointToRay(crosshairPos.position);
             }
                 
         }
