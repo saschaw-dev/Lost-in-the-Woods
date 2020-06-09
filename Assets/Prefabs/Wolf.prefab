@@ -501,10 +501,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4780706623884012}
   - component: {fileID: 95148067665708654}
-  - component: {fileID: 195124030186913142}
   - component: {fileID: 114323590927107042}
   - component: {fileID: 65981867550586872}
   - component: {fileID: 114515880887064070}
+  - component: {fileID: 195388474086886782}
   m_Layer: 0
   m_Name: Wolf
   m_TagString: Untagged
@@ -1408,7 +1408,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1553742288249308}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 253.8, y: 100.15, z: 267.1284}
+  m_LocalPosition: {x: 253.91, y: 100.15, z: 267.718}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4173775540327186}
@@ -1625,10 +1625,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lookDistance: 20
   attackDistance: 3
-  lookSpeed: 1
-  agent: {fileID: 195124030186913142}
+  lookSpeed: 6
+  agent: {fileID: 0}
   waitTimeInSeconds: 5
   attackPoints: 2
+  runningSpeed: 6
+  walkingSpeed: 3
 --- !u!114 &114515880887064070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1739,7 +1741,7 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.004586689, y: 0.54872423, z: 0.17016014}
     m_Extent: {x: 0.20984915, y: 0.57486314, z: 0.84898067}
   m_DirtyAABB: 0
---- !u!195 &195124030186913142
+--- !u!195 &195388474086886782
 NavMeshAgent:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1747,16 +1749,16 @@ NavMeshAgent:
   m_GameObject: {fileID: 1553742288249308}
   m_Enabled: 1
   m_AgentTypeID: -1372625422
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 4.5
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 6.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 1
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4

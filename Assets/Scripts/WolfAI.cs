@@ -50,7 +50,7 @@ public class WolfAI : MonoBehaviour {
         if (distance <= attackDistance)
         {
             agent.isStopped = true;
-            lookAtPlayer();
+            //lookAtPlayer();
             attack();
         } else if (distance <= lookDistance)
         {
@@ -79,10 +79,9 @@ public class WolfAI : MonoBehaviour {
 
     void attack()
     {
-        if (!animator.GetBool("isAttacking"))
-        {
-            animator.SetBool("isAttacking", true);
-        }
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isRunning", false);
+        animator.SetBool("isAttacking", true);
         playerHealth.Damaging(attackPoints * Time.deltaTime);
     }
 
