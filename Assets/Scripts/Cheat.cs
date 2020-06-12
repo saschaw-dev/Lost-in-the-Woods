@@ -16,6 +16,7 @@ public class Cheat : MonoBehaviour {
     public InputField command;
     public InventoryItem wood;
     public InventoryItem stone;
+    public InventoryItem stoneKnife;
     public InventoryItem axe;
     public InventoryItem wall;
     public InventoryItem doorWall;
@@ -24,6 +25,7 @@ public class Cheat : MonoBehaviour {
     public InventoryItem chest;
     public InventoryItem leave;
     public InventoryItem fiber;
+    public InventoryItem meat;
     int i;
 
     // Use this for initialization
@@ -71,6 +73,9 @@ public class Cheat : MonoBehaviour {
             case "stone":
                 GetItems(10, stone);
                 break;
+            case "stoneKnife":
+                GetItems(10, stoneKnife);
+                break;
             case "wall":
                 GetItems(10, wall);
                 break;
@@ -103,6 +108,9 @@ public class Cheat : MonoBehaviour {
                 break;
             case "stamina":
                 playerStamina.RaiseStamina(100f);
+                break;
+            case "meat":
+                GetItems(10, meat);
                 break;
             default:
                 break;

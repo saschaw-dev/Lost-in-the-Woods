@@ -18,6 +18,12 @@ public class DeerAI : MonoBehaviour {
     public float waitTimeInSeconds;
     public float runningSpeed;
     public float walkingSpeed;
+    public float maxBushDistance;
+    public float blockDurability;
+    public AudioClip dropSound;
+    public InventoryItem droppableMeat;
+    public float beforeDestroyTime;
+    public AudioClip hitSound;
     //////////////////////////////
     float distance = 0f;
     Vector3 playerDir;
@@ -27,6 +33,10 @@ public class DeerAI : MonoBehaviour {
     DeerHealth deerHealth;
     PlayerHealth playerHealth;
     Player player;
+    GameObject[] bushes;
+    Vector3[] bushPositions;
+    bool isLookingForFood = false;
+    bool isDropped = false;
 
 	// Use this for initialization
 	void Start () {
@@ -36,63 +46,119 @@ public class DeerAI : MonoBehaviour {
         playerGO = GameObject.FindWithTag("Player");
         player = playerGO.GetComponent<Player>();
         playerHealth = player.GetComponent<PlayerHealth>();
+        bushes = GameObject.FindGameObjectsWithTag("bush");
+        storeBushPositions();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        playerPos = playerGO.transform.position;
-        distance = Vector3.Distance(transform.position, playerPos);
-        if (deerHealth.deerHealth <= 0)
+        if (!animator.GetBool("isDying"))
         {
-            dying();
-        }
-        if (distance <= runAwayDistance)
-        {
-            if (!animator.GetBool("isRunning"))
+            playerPos = playerGO.transform.position;
+            distance = Vector3.Distance(transform.position, playerPos);
+            if (deerHealth.deerHealth <= 0)
             {
-                runAway();
+                isLookingForFood = false;
+                dying();
+                return;
             }
-            if (animator.GetBool("isRunning") && (agent.remainingDistance == 0f || agent.isStopped))
+            if (distance <= runAwayDistance)
             {
-                animator.SetBool("isRunning", false);
-                runAway();
-            }
-        } else if (distance <= lookDistance)
-        {
-            Debug.Log("Gesehen");
-            animator.SetBool("isEating", false);
-            if (!animator.GetBool("isRunning"))
-            {
-                lookAtPlayer();
-                idle();
-            } else
-            {
-                if (agent.remainingDistance == 0f || agent.isStopped)
+                isLookingForFood = false;
+                if (!animator.GetBool("isRunning"))
                 {
                     runAway();
+                }
+                if (animator.GetBool("isRunning") && (agent.remainingDistance == 0f || agent.isStopped))
+                {
+                    animator.SetBool("isRunning", false);
+                    runAway();
+                }
+            }
+            else if (distance <= lookDistance)
+            {
+                Debug.Log("Gesehen");
+                isLookingForFood = false;
+                animator.SetBool("isEating", false);
+                if (!animator.GetBool("isRunning"))
+                {
+                    lookAtPlayer();
+                    idle();
+                }
+                else
+                {
+                    if (agent.remainingDistance == 0f || agent.isStopped)
+                    {
+                        runAway();
+                    }
+                }
+            }
+            else
+            {
+                //Debug.Log("Aus den Augen");
+                if (animator.GetBool("isRunning"))
+                {
+                    agent.isStopped = true;
+                    animator.SetBool("isWalking", false);
+                    animator.SetBool("isRunning", false);
+                    StartCoroutine("WaitRndTime");
+                }
+                if (!animator.GetBool("isWalking") && !isStillWaiting && !isLookingForFood)
+                {
+                    StartCoroutine("Wander");
+                }
+                if (agent.isStopped || agent.remainingDistance == 0f)
+                {
+                    animator.SetBool("isWalking", false);
+                    if (isLookingForFood)
+                    {
+                        eat();
+                    }
                 }
             }
         }
         else
         {
-            Debug.Log("Aus den Augen");
-            animator.SetBool("isEating", false);
-            if (animator.GetBool("isRunning"))
+            // Verhalten bei Tod
+            if (blockDurability == 0 && !isDropped)
             {
-                agent.isStopped = true;
-                animator.SetBool("isWalking", false);
-                animator.SetBool("isRunning", false);
-                StartCoroutine("WaitRndTime");
-            }
-            if (!animator.GetBool("isWalking") && !isStillWaiting)
-            {
-                StartCoroutine("Wander");
-            }
-            if (agent.isStopped || agent.remainingDistance == 0f)
-            {
-                animator.SetBool("isWalking", false);
+                dropItems();
             }
         }
+    }
+
+    void storeBushPositions()
+    {
+        bushPositions = new Vector3[bushes.Length];
+
+        for (int i = 0; i < bushPositions.Length; i++)
+        {
+            bushPositions[i] = bushes[i].transform.position;
+        }
+    }
+
+    void dropItems()
+    {
+        GameObject.Instantiate(droppableMeat.prefab, transform.position, droppableMeat.prefab.transform.localRotation);
+        GameObject.Instantiate(droppableMeat.prefab, transform.position + new Vector3(1,0,0), droppableMeat.prefab.transform.localRotation);
+        AudioSource.PlayClipAtPoint(dropSound, transform.position);
+        isDropped = true;
+        StartCoroutine("DestroyYourselfAfterTime");
+    }
+
+    Vector3 getNearestBushPos()
+    {
+        float distanceToBush;
+        Vector3 nearestBush = bushPositions[0];
+        for (int i = 1; i < bushPositions.Length; i++)
+        {
+            distanceToBush = Vector3.Distance(transform.position, bushPositions[i]);
+            if (distanceToBush < Vector3.Distance(transform.position, nearestBush))
+            {
+                nearestBush = bushPositions[i];
+            }
+        }
+        return nearestBush;
     }
 
     void dying()
@@ -149,27 +215,66 @@ public class DeerAI : MonoBehaviour {
 
     void eat()
     {
+        animator.SetBool("isEating", true);
+    }
 
+    public void getWeaponDamage(InventoryItem weapon)
+    {
+        deerHealth.Damaging(weapon.damage); // wird nicht pro Frame, sondern pro Mausklick ausgeführt => Kein DeltaTime!
+        AudioSource.PlayClipAtPoint(hitSound, transform.position);
+    }
+
+    public void getBlockDamage(InventoryItem stoneKnife)
+    {
+        blockDurability -= stoneKnife.blockDamage;
+        if (blockDurability < 0)
+        {
+            blockDurability = 0;
+        }
+    }
+
+    protected IEnumerator DestroyYourselfAfterTime()
+    {
+        yield return new WaitForSeconds(beforeDestroyTime);
+        GameObject.Destroy(gameObject);
     }
 
     protected IEnumerator Wander()
     {
+        /* Warten */
         isStillWaiting = true;
         int waitTime = Random.Range(10, 20);
         yield return new WaitForSeconds(waitTime);
-        isStillWaiting = false;
-        NavMeshPath path = new NavMeshPath();
-        Vector3 rndPos = getRndPos();
-        while (!agent.CalculatePath(rndPos, path))
+        ////////////////////////////////////////////////
+        /* Wandern */
+        /* Etwas zu essen in der Nähe? */
+        Vector3 nearestBushPos = getNearestBushPos();
+        if (Vector3.Distance(transform.position, nearestBushPos) <= maxBushDistance)
+        {  
+            isStillWaiting = false;
+            agent.speed = walkingSpeed;
+            animator.SetBool("isWalking", true);
+            agent.isStopped = false;
+            agent.SetDestination(nearestBushPos);
+            isLookingForFood = true;
+            Debug.Log("Zum Busch gehen");
+            isStillWaiting = false;
+        } else
         {
-            rndPos = getRndPos();
+            NavMeshPath path = new NavMeshPath();
+            Vector3 rndPos = getRndPos();
+            while (!agent.CalculatePath(rndPos, path))
+            {
+                rndPos = getRndPos();
+            }
+            isStillWaiting = false;
+            agent.speed = walkingSpeed;
+            animator.SetBool("isWalking", true);
+            agent.isStopped = false;
+            agent.SetDestination(rndPos);
+            Debug.Log("Wandern");
         }
-        agent.speed = walkingSpeed;
-        agent.SetDestination(rndPos);
-        animator.SetBool("isWalking", true);
-        agent.isStopped = false;
-        agent.SetDestination(getRndPos());
-        Debug.Log("Wandern");
+        /////////////////////////////////////////////////
     }
 
     Vector3 getRndPos()

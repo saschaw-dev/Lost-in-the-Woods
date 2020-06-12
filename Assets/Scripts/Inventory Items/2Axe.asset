@@ -16,9 +16,9 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 4075c4781bb5c9f48ab67a0c9e82ec64, type: 3}
   picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
   prefab: {fileID: 1109927569504214, guid: 6afee58b2f8d3eb47a3325cce6c17c0f, type: 2}
-  equiped: 0
+  equiped: 1
   filling: 0
-  damage: 50
+  damage: 25
   blockDamage: 1
   useAnimation: {fileID: 0}
   useAnima: {fileID: 7400000, guid: 5eb29252afc4fb84ba02b07340195bef, type: 2}

@@ -26,7 +26,9 @@ public class ItemUse : MonoBehaviour {
     public InventoryItem ip;
     Inventory playerInventory;
     PlayerHealth playerHealth;
+    Animator deerAnimator;
     bool switcher = false;
+    float timer = 0f;
 
     private void Awake()
     {
@@ -47,6 +49,7 @@ public class ItemUse : MonoBehaviour {
         buildScript = player.GetComponentInChildren<Build>();
         myCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         crosshairPos = GameObject.Find("Crosshair").GetComponent<Transform>();
+        deerAnimator = GameObject.Find("Deer").GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -60,17 +63,34 @@ public class ItemUse : MonoBehaviour {
         }
         if (Physics.Raycast(ray, out hit, 1)) // Hat der Strahl etwas getroffen?
         {
-            if (hit.collider.gameObject.GetComponent<WolfAI>() != null)
+            GameObject hitGO = hit.collider.gameObject;
+
+            if (hitGO.GetComponent<WolfAI>() != null)
             {
-                hit.collider.gameObject.GetComponent<WolfAI>().getHit(ip);
+                hitGO.GetComponent<WolfAI>().getWeaponDamage(ip);
             }
+            if (ip.damage > 0 && !deerAnimator.GetBool("isDying"))
+            {
+                if (hitGO.GetComponent<DeerAI>() != null)
+                {
+                    hitGO.GetComponent<DeerAI>().getWeaponDamage(ip);
+                }
+            }
+            if (hitGO.GetComponent<DeerAI>() != null && ip.itemNumber == 7 && deerAnimator.GetBool("isDying"))
+            {
+                // Reh kann man nur mit dem Steinmesser abbauen
+                hitGO.GetComponent<DeerAI>().getBlockDamage(ip);
+            }
+            ray = new Ray(); // Überschreiben des Rays damit getHit nur einmal ausgeführt wird!
         }
+        Debug.Log(timer);
     }
     
     void UseItemOnMouseLeft()
-    {
+    { 
         if (Input.GetMouseButtonDown(0) && !Cursor.visible)
         {
+            timer += Time.deltaTime;
             if (myAnimation)
             {
                 myAnimation.Play();
@@ -79,7 +99,7 @@ public class ItemUse : MonoBehaviour {
 
             if (ip.filling > 0)//falls es sich um Essen handelt
             {
-                if (ip.itemName == "Mushroom")//falls es sich um Pilze handelt Giftschaden an Selbst
+                if (ip.itemName == "Mushroom" || ip.itemName == "meat")//falls es sich um Pilze oder rohes Fleisch handelt, Giftschaden an Selbst
                 {
                     playerHealth.Damaging(ip.damage);
                 }
@@ -96,11 +116,10 @@ public class ItemUse : MonoBehaviour {
                 OnAllUnitsAreUsed(ip);
                 switcher = true;//Schalter an
             }
-            if (ip.damage > 0) // falls es sich um eine Waffe handelt
+            if (ip.damage > 0 || ip.blockDamage > 0) // falls es sich um eine Waffe oder Werkzeug handelt
             {
                 ray = myCamera.ScreenPointToRay(crosshairPos.position);
-            }
-                
+            }                
         }
     }
 

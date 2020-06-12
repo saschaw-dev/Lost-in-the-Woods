@@ -19,6 +19,7 @@ public class WolfAI : MonoBehaviour {
     public float attackPoints;
     public float runningSpeed;
     public float walkingSpeed;
+    public AudioClip howl;
     /////////////////////////////////////////
     float distance = 0f;
     Vector3 playerDir;
@@ -41,38 +42,43 @@ public class WolfAI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        playerPos = playerGO.transform.position;
-        distance = Vector3.Distance(transform.position, playerPos);
-        if (wolfHealth.wolfHealth <= 0)
+        if (!animator.GetBool("isDying"))
         {
-            dying();
-        }
-        if (distance <= attackDistance)
-        {
-            agent.isStopped = true;
-            //lookAtPlayer();
-            attack();
-        } else if (distance <= lookDistance)
-        {
-            animator.SetBool("isAttacking", false);
-            lookAtPlayer();
-            hunt();
-        }
-        else
-        {
-            animator.SetBool("isAttacking", false);
-            if (animator.GetBool("isRunning")) {
+            playerPos = playerGO.transform.position;
+            distance = Vector3.Distance(transform.position, playerPos);
+            if (wolfHealth.wolfHealth <= 0)
+            {
+                dying();
+                return;
+            }
+            if (distance <= attackDistance)
+            {
                 agent.isStopped = true;
-                animator.SetBool("isRunning", false);
-                StartCoroutine("WaitRndTime");
-            }
-            if (!animator.GetBool("isWalking") && !isStillWaiting)
+                lookAtPlayer();
+                attack();
+            } else if (distance <= lookDistance)
             {
-                StartCoroutine("Wander");
+                animator.SetBool("isAttacking", false);
+                lookAtPlayer();
+                hunt();
             }
-            if (agent.isStopped || agent.remainingDistance == 0f)
+            else
             {
-                animator.SetBool("isWalking", false);
+                animator.SetBool("isAttacking", false);
+                if (animator.GetBool("isRunning")) {
+                    agent.isStopped = true;
+                    animator.SetBool("isRunning", false);
+                    StartCoroutine("WaitRndTime");
+                }
+                if (!animator.GetBool("isWalking") && !isStillWaiting)
+                {
+                    StartCoroutine("Wander");
+                }
+                if (agent.isStopped || agent.remainingDistance == 0f)
+                {
+                    animator.SetBool("isWalking", false);
+                }
+
             }
         }
     }
@@ -89,26 +95,29 @@ public class WolfAI : MonoBehaviour {
     {
         animator.SetBool("isWalking", false);
         animator.SetBool("isRunning", false);
+        animator.SetBool("isAttacking", false);
         // Berechne Richtungsvektor. Dieser zeigt vom Wolf zum Spieler.
         playerDir = playerPos - transform.position;
         // Berechne die Rotation zur Spielerrichtung und speichere diese in ein Quaternion.
         lookRot = Quaternion.LookRotation(playerDir);
         // Erzeuge eine smoothe Bewegung von der Ursprungsrotation zur Zielrotation.
+        lookRot = Quaternion.Euler(new Vector3(0f, lookRot.eulerAngles.y, 0f));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * lookSpeed);
     }
 
     protected IEnumerator Wander()
     {
         isStillWaiting = true;
+        AudioSource.PlayClipAtPoint(howl, transform.position, 1.0f);
         int waitTime = Random.Range(10, 20);
         yield return new WaitForSeconds(waitTime);
-        isStillWaiting = false;
         NavMeshPath path = new NavMeshPath();
         Vector3 rndPos = getRndPos();
         while (!agent.CalculatePath(rndPos, path))
         {
             rndPos = getRndPos();
         }
+        isStillWaiting = false;
         agent.speed = walkingSpeed;
         agent.SetDestination(rndPos);
         animator.SetBool("isWalking", true);
@@ -135,9 +144,9 @@ public class WolfAI : MonoBehaviour {
         agent.isStopped = true;
     }
 
-    public void getHit(InventoryItem weapon)
+    public void getWeaponDamage(InventoryItem weapon)
     {
-        wolfHealth.Damaging(weapon.damage);
+        wolfHealth.Damaging(weapon.damage); // wird nicht pro Frame, sondern pro Mausklick ausgeführt => Kein DeltaTime!
     }
 
     protected IEnumerator WaitRndTime()

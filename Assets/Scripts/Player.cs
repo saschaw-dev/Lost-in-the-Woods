@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     GameObject equipedStone;
     GameObject equipedWood;
     GameObject equipedLeave;
+    GameObject equipedMeat;
     GameObject wallPlaceholder;
     GameObject floorTilePlaceholder;
     GameObject foundationPlaceholder;
@@ -98,6 +99,8 @@ public class Player : MonoBehaviour
         equipedWood.SetActive(false);
         equipedLeave = GameObject.Find("EquipedLeave");
         equipedLeave.SetActive(false);
+        equipedMeat = GameObject.Find("EquipedMeat");
+        equipedMeat.SetActive(false);
         wallPlaceholder = GameObject.Find("WallPlaceholder");
         wallPlaceholder.SetActive(false);
         floorTilePlaceholder = GameObject.Find("FloorTilePlaceholder");
@@ -222,6 +225,7 @@ public class Player : MonoBehaviour
         if (ip.itemName == "wood") currentGameObject = equipedWood;
         if (ip.itemName == "fiber") currentGameObject = equipedFiber;
         if (ip.itemName == "leave") currentGameObject = equipedLeave;
+        if (ip.itemName == "meat") currentGameObject = equipedMeat;
         if (ip.itemName == "wall") currentGameObject = wallPlaceholder;
         if (ip.itemName == "floorTile") currentGameObject = floorTilePlaceholder;
         if (ip.itemName == "foundation") currentGameObject = foundationPlaceholder;

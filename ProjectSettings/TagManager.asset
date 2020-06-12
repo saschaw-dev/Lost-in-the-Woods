@@ -13,6 +13,7 @@ TagManager:
   - door
   - chestImage
   - chestTile
+  - bush
   layers:
   - Default
   - TransparentFX
