@@ -1604,7 +1604,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 5a65f3013be671d42b373a04733cc760, type: 3}
   m_Controller: {fileID: 9100000, guid: a2f1fec9538c33449aa42f390ad43dc4, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -1631,6 +1631,8 @@ MonoBehaviour:
   attackPoints: 2
   runningSpeed: 8
   walkingSpeed: 3
+  howl: {fileID: 8300000, guid: fec0da84e19c4e744b03ccdd11050cea, type: 3}
+  growl: {fileID: 8300000, guid: 7b5a31c640e256444a236a1476c3ff76, type: 3}
 --- !u!114 &114515880887064070
 MonoBehaviour:
   m_ObjectHideFlags: 1

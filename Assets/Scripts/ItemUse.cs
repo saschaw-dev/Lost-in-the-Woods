@@ -27,6 +27,8 @@ public class ItemUse : MonoBehaviour {
     Inventory playerInventory;
     PlayerHealth playerHealth;
     Animator deerAnimator;
+    Animator boarAnimator;
+    Animator wolfAnimator;
     bool switcher = false;
     float timer = 0f;
 
@@ -50,6 +52,8 @@ public class ItemUse : MonoBehaviour {
         myCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         crosshairPos = GameObject.Find("Crosshair").GetComponent<Transform>();
         deerAnimator = GameObject.Find("Deer").GetComponent<Animator>();
+        boarAnimator = GameObject.Find("WildBoar").GetComponent<Animator>();
+        wolfAnimator = GameObject.Find("Wolf").GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -61,13 +65,27 @@ public class ItemUse : MonoBehaviour {
         {
             OnStackIsUsed();
         }
-        if (Physics.Raycast(ray, out hit, 1)) // Hat der Strahl etwas getroffen?
+        if (Physics.Raycast(ray, out hit, 2f)) // Hat der Strahl etwas getroffen?
         {
             GameObject hitGO = hit.collider.gameObject;
 
-            if (hitGO.GetComponent<WolfAI>() != null)
+            if (hitGO.GetComponent<WolfAI>() != null && !wolfAnimator.GetBool("isDying"))
             {
                 hitGO.GetComponent<WolfAI>().getWeaponDamage(ip);
+            }
+            if (hitGO.GetComponent<WolfAI>() != null && ip.itemNumber == 7 && wolfAnimator.GetBool("isDying"))
+            {
+                // Wolf kann man nur mit dem Steinmesser abbauen
+                hitGO.GetComponent<WolfAI>().getBlockDamage(ip);
+            }
+            if (hitGO.GetComponent<WildBoarAI>() != null && !boarAnimator.GetBool("isDying"))
+            {
+                hitGO.GetComponent<WildBoarAI>().getWeaponDamage(ip);
+            }
+            if (hitGO.GetComponent<WildBoarAI>() != null && ip.itemNumber == 7 && boarAnimator.GetBool("isDying"))
+            {
+                // Wildschwein kann man nur mit dem Steinmesser abbauen
+                hitGO.GetComponent<WildBoarAI>().getBlockDamage(ip);
             }
             if (ip.damage > 0 && !deerAnimator.GetBool("isDying"))
             {
@@ -83,14 +101,12 @@ public class ItemUse : MonoBehaviour {
             }
             ray = new Ray(); // Überschreiben des Rays damit getHit nur einmal ausgeführt wird!
         }
-        Debug.Log(timer);
     }
     
     void UseItemOnMouseLeft()
     { 
         if (Input.GetMouseButtonDown(0) && !Cursor.visible)
         {
-            timer += Time.deltaTime;
             if (myAnimation)
             {
                 myAnimation.Play();
@@ -107,14 +123,14 @@ public class ItemUse : MonoBehaviour {
                 HungerController.RaiseHunger(ip.filling);//Sättigen      
                 playerInventory.UseItem(ip);//Verringere Itemzahl um 1
                 OnAllUnitsAreUsed(ip);
-                switcher = true;//Schalter an
+                switcher = true;
             }
             if(ip.isBuildItem && this.buildScript.GetIsBuildModeOn()) // falls es sich um ein Baumodus-Objekt handelt
             {
                 this.buildScript.ReplaceWithRealBlock();
                 this.playerInventory.UseItem(ip);
                 OnAllUnitsAreUsed(ip);
-                switcher = true;//Schalter an
+                switcher = true;
             }
             if (ip.damage > 0 || ip.blockDamage > 0) // falls es sich um eine Waffe oder Werkzeug handelt
             {
@@ -168,7 +184,7 @@ public class ItemUse : MonoBehaviour {
             {
                 if(playerInventory.items[ip] % 10 == 0)
                 {
-                    switcher = false;//Schalter aus
+                    switcher = false;
                     handImage.sprite = null;//Entferne Item Pic aus Hand Pic
                     InventoryItem.lastEquiped = false;//Setze Equiped wieder auf False
                     gameObject.SetActive(false);//Entferne Item GO aus der Hand
@@ -181,7 +197,7 @@ public class ItemUse : MonoBehaviour {
             }
             else if (playerInventory.items[ip] % 10 == 0 && myAnimation.isPlaying == false)//Wenn aktiver Stapel verbraucht ist und Animation fertig gespielt
             {
-                switcher = false;//Schalter aus
+                switcher = false;
                 handImage.sprite = null;//Entferne Item Pic aus Hand Pic
                 InventoryItem.lastEquiped = false;//Setze Equiped wieder auf False
                 gameObject.SetActive(false);//Entferne Item GO aus der Hand

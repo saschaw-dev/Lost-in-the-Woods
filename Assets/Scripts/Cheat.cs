@@ -26,6 +26,7 @@ public class Cheat : MonoBehaviour {
     public InventoryItem leave;
     public InventoryItem fiber;
     public InventoryItem meat;
+    public InventoryItem wolfHide;
     int i;
 
     // Use this for initialization
@@ -111,6 +112,9 @@ public class Cheat : MonoBehaviour {
                 break;
             case "meat":
                 GetItems(10, meat);
+                break;
+            case "wolfHide":
+                GetItems(10, wolfHide);
                 break;
             default:
                 break;

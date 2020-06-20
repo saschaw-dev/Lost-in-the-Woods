@@ -20,6 +20,12 @@ public class WolfAI : MonoBehaviour {
     public float runningSpeed;
     public float walkingSpeed;
     public AudioClip howl;
+    public AudioClip growl;
+    public float blockDurability;
+    public AudioClip dropSound;
+    public InventoryItem droppableHide;
+    public float beforeDestroyTime;
+    public AudioClip whining;
     /////////////////////////////////////////
     float distance = 0f;
     Vector3 playerDir;
@@ -28,6 +34,8 @@ public class WolfAI : MonoBehaviour {
     WolfHealth wolfHealth;
     PlayerHealth playerHealth;
     Player player;
+    bool lastStateWasNotAttackOrLook = true;
+    bool isDropped = false;
 
     // Use this for initialization
     void Start () {
@@ -38,7 +46,7 @@ public class WolfAI : MonoBehaviour {
         wolfHealth = GetComponent<WolfHealth>();
         player = playerGO.GetComponent<Player>();
         playerHealth = player.GetComponent<PlayerHealth>();
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -64,6 +72,7 @@ public class WolfAI : MonoBehaviour {
             }
             else
             {
+                lastStateWasNotAttackOrLook = true;
                 animator.SetBool("isAttacking", false);
                 if (animator.GetBool("isRunning")) {
                     agent.isStopped = true;
@@ -78,7 +87,14 @@ public class WolfAI : MonoBehaviour {
                 {
                     animator.SetBool("isWalking", false);
                 }
-
+            }
+        }
+        else
+        {
+            // Verhalten bei Tod
+            if (blockDurability == 0 && !isDropped)
+            {
+                dropItems();
             }
         }
     }
@@ -88,6 +104,11 @@ public class WolfAI : MonoBehaviour {
         animator.SetBool("isWalking", false);
         animator.SetBool("isRunning", false);
         animator.SetBool("isAttacking", true);
+        if (lastStateWasNotAttackOrLook)
+        {
+            AudioSource.PlayClipAtPoint(growl, transform.position, 1f);
+            lastStateWasNotAttackOrLook = false;
+        } 
         playerHealth.Damaging(attackPoints * Time.deltaTime);
     }
 
@@ -144,9 +165,34 @@ public class WolfAI : MonoBehaviour {
         agent.isStopped = true;
     }
 
+    void dropItems()
+    {
+        GameObject.Instantiate(droppableHide.prefab, transform.position, droppableHide.prefab.transform.localRotation);
+        GameObject.Instantiate(droppableHide.prefab, transform.position + new Vector3(1, 0, 0), droppableHide.prefab.transform.localRotation);
+        AudioSource.PlayClipAtPoint(dropSound, transform.position);
+        isDropped = true;
+        StartCoroutine("DestroyYourselfAfterTime");
+    }
+
+    protected IEnumerator DestroyYourselfAfterTime()
+    {
+        yield return new WaitForSeconds(beforeDestroyTime);
+        GameObject.Destroy(gameObject);
+    }
+
     public void getWeaponDamage(InventoryItem weapon)
     {
         wolfHealth.Damaging(weapon.damage); // wird nicht pro Frame, sondern pro Mausklick ausgeführt => Kein DeltaTime!
+        AudioSource.PlayClipAtPoint(whining, transform.position, 1.0f);
+    }
+
+    public void getBlockDamage(InventoryItem stoneKnife)
+    {
+        blockDurability -= stoneKnife.blockDamage;
+        if (blockDurability < 0)
+        {
+            blockDurability = 0;
+        }
     }
 
     protected IEnumerator WaitRndTime()

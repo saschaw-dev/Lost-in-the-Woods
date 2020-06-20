@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     GameObject equipedWood;
     GameObject equipedLeave;
     GameObject equipedMeat;
+    GameObject equipedWolfHide;
     GameObject wallPlaceholder;
     GameObject floorTilePlaceholder;
     GameObject foundationPlaceholder;
@@ -47,6 +48,8 @@ public class Player : MonoBehaviour
     public static bool isDying = false;
     public bool isWet = false;
     public bool isInWarmingArea = false;
+    public float criticalHealthRate;
+    public AudioClip heartBeat;
     ////////////////////////////////////////////////
     private bool isRunning = false;
     float run = 0.5F;
@@ -63,8 +66,12 @@ public class Player : MonoBehaviour
     private bool isIndoor = false; // Read-only
     private bool isInFire = false; // Read-only
     Image indoorIcon;
+    Image bloodScreen;
     Color transparent;
     Color notTransparent;
+    float timeSinceAudioStart = 0f;
+    bool audioIsPlaying = false;
+    float pauseTime = 1f; // in Sekunden
 
     //wird zu Beginn ausgeführt, auch wenn Gameobject deaktiviert
     private void Awake()
@@ -81,6 +88,7 @@ public class Player : MonoBehaviour
         controller = GetComponent<CharacterController>();
         rotation = transform.rotation;
         indoorIcon = GameObject.Find("Indoor").GetComponent<Image>();
+        bloodScreen = GameObject.Find("BloodScreen").GetComponent<Image>();
         equipedAxe = GameObject.Find("EquipedAxe");
         equipedAxe.SetActive(equiped);
         equipedBow = GameObject.Find("EquipedBow");
@@ -101,6 +109,8 @@ public class Player : MonoBehaviour
         equipedLeave.SetActive(false);
         equipedMeat = GameObject.Find("EquipedMeat");
         equipedMeat.SetActive(false);
+        equipedWolfHide = GameObject.Find("EquipedWolfHide");
+        equipedWolfHide.SetActive(false);
         wallPlaceholder = GameObject.Find("WallPlaceholder");
         wallPlaceholder.SetActive(false);
         floorTilePlaceholder = GameObject.Find("FloorTilePlaceholder");
@@ -124,6 +134,7 @@ public class Player : MonoBehaviour
         transparent.a = 0.35f;
         notTransparent = new Color(1f, 1f, 1f, 1f);
         indoorIcon.color = transparent;
+        bloodScreen.enabled = false;
     }
 
     void initializeStats()
@@ -143,6 +154,7 @@ public class Player : MonoBehaviour
         itemPos = transform.position + new Vector3(0.4F, 0, 0.4F);
         StepSounds();
         checkIfPlayerIsIndoor();
+        CriticalHealthState();
     }
 
     public bool getIsIndoor()
@@ -172,6 +184,30 @@ public class Player : MonoBehaviour
             isDying = true;
             playerHealth.Dying();
 
+        }
+    }
+
+    private void CriticalHealthState()
+    {
+        if (PlayerHealth.playerHealth/PlayerHealth.playerMaxHealth < criticalHealthRate)
+        {
+            // Zeige Blutbildschirm
+            bloodScreen.enabled = true;
+            if (audioIsPlaying)
+            {
+                timeSinceAudioStart += Time.deltaTime;
+            }
+            // Starte Audioclip nachdem dieser und eine Wartezeit vorbei sind
+            if (timeSinceAudioStart >= (heartBeat.length + pauseTime) || !audioIsPlaying)
+            {
+                timeSinceAudioStart = 0f;
+                AudioSource.PlayClipAtPoint(heartBeat, transform.position, 1.0f);
+                audioIsPlaying = true;
+            }
+        } else
+        {
+            bloodScreen.enabled = false;
+            audioIsPlaying = false;
         }
     }
 
@@ -226,6 +262,7 @@ public class Player : MonoBehaviour
         if (ip.itemName == "fiber") currentGameObject = equipedFiber;
         if (ip.itemName == "leave") currentGameObject = equipedLeave;
         if (ip.itemName == "meat") currentGameObject = equipedMeat;
+        if (ip.itemName == "wolfHide") currentGameObject = equipedWolfHide;
         if (ip.itemName == "wall") currentGameObject = wallPlaceholder;
         if (ip.itemName == "floorTile") currentGameObject = floorTilePlaceholder;
         if (ip.itemName == "foundation") currentGameObject = foundationPlaceholder;
