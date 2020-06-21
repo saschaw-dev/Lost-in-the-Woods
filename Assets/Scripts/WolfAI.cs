@@ -77,14 +77,16 @@ public class WolfAI : MonoBehaviour {
                 if (animator.GetBool("isRunning")) {
                     agent.isStopped = true;
                     animator.SetBool("isRunning", false);
-                    StartCoroutine("WaitRndTime");
+                    //StartCoroutine("WaitRndTime");
                 }
                 if (!animator.GetBool("isWalking") && !isStillWaiting)
                 {
+                    Debug.Log("Starte Wandern");
                     StartCoroutine("Wander");
                 }
-                if (agent.isStopped || agent.remainingDistance == 0f)
+                if ((agent.isStopped || agent.remainingDistance == 0f) && !isStillWaiting)
                 {
+                    Debug.Log("Stoppe Laufanimation");
                     animator.SetBool("isWalking", false);
                 }
             }
@@ -129,21 +131,27 @@ public class WolfAI : MonoBehaviour {
     protected IEnumerator Wander()
     {
         isStillWaiting = true;
+        agent.isStopped = true;
         AudioSource.PlayClipAtPoint(howl, transform.position, 1.0f);
         int waitTime = Random.Range(10, 20);
+        Debug.Log("Warte");
         yield return new WaitForSeconds(waitTime);
+        Debug.Log("Warten fertig");
+        Debug.Log("Suche Pfad");
         NavMeshPath path = new NavMeshPath();
         Vector3 rndPos = getRndPos();
         while (!agent.CalculatePath(rndPos, path))
         {
             rndPos = getRndPos();
         }
-        isStillWaiting = false;
+        Debug.Log("Pfad gefunden");
         agent.speed = walkingSpeed;
         agent.SetDestination(rndPos);
+        Debug.Log("Wandern");
         animator.SetBool("isWalking", true);
         agent.isStopped = false;
         agent.SetDestination(getRndPos());
+        isStillWaiting = false;
     }
     
     void hunt()

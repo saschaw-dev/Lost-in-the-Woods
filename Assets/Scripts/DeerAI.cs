@@ -77,7 +77,6 @@ public class DeerAI : MonoBehaviour {
             }
             else if (distance <= lookDistance)
             {
-                Debug.Log("Gesehen");
                 isLookingForFood = false;
                 animator.SetBool("isEating", false);
                 if (!animator.GetBool("isRunning"))
@@ -186,7 +185,6 @@ public class DeerAI : MonoBehaviour {
 
     void idle()
     {
-        Debug.Log("Warte");
         agent.isStopped = true;
     }
 
@@ -207,7 +205,6 @@ public class DeerAI : MonoBehaviour {
             rndEscapePos = getRndPos();
         }
         agent.isStopped = false;
-        Debug.Log("Renne los");
         animator.SetBool("isRunning", true);
         agent.SetDestination(rndEscapePos);
         agent.speed = runningSpeed;
@@ -257,7 +254,6 @@ public class DeerAI : MonoBehaviour {
             agent.isStopped = false;
             agent.SetDestination(nearestBushPos);
             isLookingForFood = true;
-            Debug.Log("Zum Busch gehen");
             isStillWaiting = false;
         } else
         {
@@ -272,7 +268,6 @@ public class DeerAI : MonoBehaviour {
             animator.SetBool("isWalking", true);
             agent.isStopped = false;
             agent.SetDestination(rndPos);
-            Debug.Log("Wandern");
         }
         /////////////////////////////////////////////////
     }

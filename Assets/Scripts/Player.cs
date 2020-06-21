@@ -72,6 +72,7 @@ public class Player : MonoBehaviour
     float timeSinceAudioStart = 0f;
     bool audioIsPlaying = false;
     float pauseTime = 1f; // in Sekunden
+    //bool isFlying = false;
 
     //wird zu Beginn ausgeführt, auch wenn Gameobject deaktiviert
     private void Awake()
@@ -155,6 +156,7 @@ public class Player : MonoBehaviour
         StepSounds();
         checkIfPlayerIsIndoor();
         CriticalHealthState();
+        //fly();
     }
 
     public bool getIsIndoor()
@@ -320,6 +322,15 @@ public class Player : MonoBehaviour
             xRotate += Input.GetAxis("Mouse X");
             yRotate = Mathf.Min(50, Mathf.Max(-50, yRotate + Input.GetAxis("Mouse Y")));
             gameObject.transform.localRotation = Quaternion.Euler(yRotate, xRotate, 0);
+        }
+    }
+
+    private void fly()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            moveDirection.y = jumpHeight;
+            controller.Move(new Vector3(transform.forward.x * Time.deltaTime, moveDirection.y * Time.deltaTime, transform.forward.z + Time.deltaTime));
         }
     }
 

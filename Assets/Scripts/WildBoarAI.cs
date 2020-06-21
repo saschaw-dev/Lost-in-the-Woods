@@ -59,28 +59,20 @@ public class WildBoarAI : MonoBehaviour {
                 dying();
                 return;
             }
-            if (distance <= attackDistance)
+            if (isAggressive && distance <= attackDistance)
             {
-                agent.isStopped = true;
-                if (isAggressive)
-                {
+                    agent.isStopped = true;
                     lookAtPlayer();
                     attack();
-                }
             }
-            else if (distance <= lookDistance)
-            {
-                animator.SetBool("isAttacking", false);
-                animator.SetBool("isWalking", false);
-                animator.SetBool("isRunning", false);
-                if (isAggressive)
-                {
-                    lookAtPlayer();
-                    hunt();
-                }
+            else if (isAggressive && distance <= lookDistance)
+            {               
+                lookAtPlayer();
+                hunt();
             }
             else
             {
+                // Falls Wildschwein nicht aggressiv ist oder Spieler weit weg
                 lastStateWasNotAttackOrLook = true;
                 animator.SetBool("isAttacking", false);
                 isAggressive = false;
@@ -88,13 +80,13 @@ public class WildBoarAI : MonoBehaviour {
                 {
                     agent.isStopped = true;
                     animator.SetBool("isRunning", false);
-                    StartCoroutine("WaitRndTime");
+                    //StartCoroutine("WaitRndTime");
                 }
                 if (!animator.GetBool("isWalking") && !isStillWaiting)
                 {
                     StartCoroutine("Wander");
                 }
-                if (agent.isStopped || agent.remainingDistance == 0f)
+                if ((agent.isStopped || agent.remainingDistance == 0f) && !isStillWaiting)
                 {
                     animator.SetBool("isWalking", false);
                 }
@@ -112,8 +104,6 @@ public class WildBoarAI : MonoBehaviour {
 
     void attack()
     {
-        animator.SetBool("isWalking", false);
-        animator.SetBool("isRunning", false);
         animator.SetBool("isAttacking", true);
         if (lastStateWasNotAttackOrLook)
         {
@@ -125,6 +115,9 @@ public class WildBoarAI : MonoBehaviour {
 
     void lookAtPlayer()
     {
+        animator.SetBool("isAttacking", false);
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isRunning", false);
         // Berechne Richtungsvektor. Dieser zeigt vom Wolf zum Spieler.
         playerDir = playerPos - transform.position;
         // Berechne die Rotation zur Spielerrichtung und speichere diese in ein Quaternion.
@@ -137,6 +130,7 @@ public class WildBoarAI : MonoBehaviour {
     protected IEnumerator Wander()
     {
         isStillWaiting = true;
+        agent.isStopped = true;
         int waitTime = Random.Range(10, 20);
         yield return new WaitForSeconds(waitTime);
         NavMeshPath path = new NavMeshPath();
@@ -145,12 +139,12 @@ public class WildBoarAI : MonoBehaviour {
         {
             rndPos = getRndPos();
         }
-        isStillWaiting = false;
         agent.speed = walkingSpeed;
         agent.SetDestination(rndPos);
         animator.SetBool("isWalking", true);
         agent.isStopped = false;
         agent.SetDestination(getRndPos());
+        isStillWaiting = false;
     }
 
     void hunt()
@@ -203,11 +197,11 @@ public class WildBoarAI : MonoBehaviour {
         GameObject.Destroy(gameObject);
     }
 
-    protected IEnumerator WaitRndTime()
-    {
-        int waitTime = Random.Range(10, 20);
-        yield return new WaitForSeconds(waitTime);
-    }
+    //protected IEnumerator WaitRndTime()
+    //{
+    //    int waitTime = Random.Range(10, 20);
+    //    yield return new WaitForSeconds(waitTime);
+    //}
 
     Vector3 getRndPos()
     {
