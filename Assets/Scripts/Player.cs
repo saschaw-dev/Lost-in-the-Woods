@@ -325,7 +325,10 @@ public class Player : MonoBehaviour
 
     private void MovePlayer()
     {
-        if (controller.isGrounded)
+        if (!controller.isGrounded)
+        {
+            moveDirection.y -= gravity * Time.deltaTime;
+        } else
         {
             if (Input.GetKey(KeyCode.LeftShift) && playerStamina.stamina > runStaminaCost * Time.deltaTime)
             {
@@ -344,8 +347,13 @@ public class Player : MonoBehaviour
             {
                 playerStamina.LowerStamina(staminaReg * Time.deltaTime); // Beim Gehen verbraucht Spieler soviel Ausdauer, wie er regeneriert
             }
-
-            moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            if (Input.GetKey(KeyCode.S))
+            {
+                moveDirection = new Vector3(Input.GetAxis("Horizontal"),-gravity *Time.deltaTime, Input.GetAxis("Vertical"));
+            } else
+            {
+                moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            }
 
             if (isRunning)
             {
@@ -363,12 +371,9 @@ public class Player : MonoBehaviour
                 controller.Move(moveDirection * Time.deltaTime);
                 playerStamina.LowerStamina(jumpStaminaCost * Time.deltaTime);
                 AudioSource.PlayClipAtPoint(jumpSound, gameObject.transform.position);
-            }
+            }   
         }
-        else
-        {
-            moveDirection.y -= gravity * Time.deltaTime;
-        }
+        Debug.Log(controller.isGrounded ? "GROUNDED" : "NOT GROUNDED");
         controller.Move(moveDirection * Time.deltaTime);
     }
 
