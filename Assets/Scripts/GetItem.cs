@@ -29,10 +29,7 @@ public class GetItem : PickableObject {
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-
-
             PickUp(myCamera.ScreenPointToRay(crosshairPos.position));
-
         }
 
         //Hand-Cursor wird sichtbar, wenn man mit der Maus über einem Objekt ist, das man aufheben kann
@@ -46,7 +43,6 @@ public class GetItem : PickableObject {
                 crosshairImage.enabled = false;//Blende Fadenkreuz aus
                 handCursor.enabled = true; //Blende Hand-Cursor ein
             }
-
         }else
         {
             handCursor.enabled = false;
@@ -70,12 +66,7 @@ public class GetItem : PickableObject {
 
                     if (inventoryItem.picSound != null)
                     {
-
-
                         AudioSource.PlayClipAtPoint(inventoryItem.picSound, player.transform.position);
-
-
-
                     }
                     GameObject.Destroy(gameObject);
                 }

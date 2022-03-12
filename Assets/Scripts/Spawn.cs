@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Basisklasse für das Spawnen von allen SCs und NSCs //
+
 public class Spawn : MonoBehaviour {
 
     public int rndValue = 0;

@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;     //Einbinden des Namespaces mit den UI Klassen Image etc.
+using UnityEngine.UI;
+
+// Klasse regelt die Durstverwaltung des Spielers //
 
 public class ThirstController : MonoBehaviour
 {
 
-    private static float thirst = 100; // darf man nur lesen von außen!
-    private static float maxThirst = 100; // darf man nur lesen von außen!
+    private static float thirst = 100;
+    private static float maxThirst = 100;
     public static Image thirstBar;
 
     public GameObject thirstSprite;

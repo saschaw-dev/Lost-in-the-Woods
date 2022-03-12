@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Klasse regelt das Herstellungsmenü //
+
 public class Craft : MonoBehaviour {
 
     private GameObject craftingPanel;
@@ -136,7 +138,6 @@ public class Craft : MonoBehaviour {
             }
         }
     }
-    
 
     public void OnButtonNextSite()
     {

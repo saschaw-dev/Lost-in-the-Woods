@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+// Klasse regelt den Baumodus //
+
 public class Build : MonoBehaviour {
     bool isBuildModeOn;
     InventoryItem currentItem;

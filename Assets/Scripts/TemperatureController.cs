@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Es soll nur Schäden durch Kälte geben, nicht durch Wärme
+// Klasse regelt die Temperatur des Spielers //
+
 public class TemperatureController : MonoBehaviour {
 
     GameObject thermoGO;
@@ -12,11 +13,11 @@ public class TemperatureController : MonoBehaviour {
     private float maxTemperature = 100f; // darf man nur von außen lesen!
     static Image thermoImage;
     Image thermoFill;
-    private float wetFreeze = 0.5f; // wenn Spieler nass ist
+    private float wetFreeze = 0; // wenn Spieler nass ist
     private float nightFreeze = 0.5f; // wenn Nacht ist, und Spieler nicht unter einem Dach ist?
-    private float warming = 0; // wenn im Lagerfeuer-TriggerCollider
     private int indoorFactor = 0;
-    private int wetFactor = 0;
+    private float temperatureDecrease = 0f;
+    private float temperatureIncrease = 0; // wenn im Lagerfeuer-Wärmebereich
     DayAndNightControl dayAndNightControl;
     Player playerScript;
     public Sprite thermoFillCold;
@@ -38,12 +39,15 @@ public class TemperatureController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        CalculateTemperature();
+        updateTemperature();
 	}
 
-    public void CalculateTemperature()
+    public void updateTemperature()
     {
-        // If-Abfragen
+        // Es soll nur Schäden durch Kälte geben, nicht durch Wärme
+
+        // Weise den Temperaturvariablen Werte zu //
+
         if (playerScript.getIsIndoor())
         {
             indoorFactor = 0;
@@ -53,17 +57,17 @@ public class TemperatureController : MonoBehaviour {
         }
         if (playerScript.isWet)
         {
-            wetFactor = 1;
+            wetFreeze = 0.5f;
         } else
         {
-            wetFactor = 0;
+            wetFreeze = 0;
         }
         if (playerScript.isInWarmingArea)
         {
-            warming = 1f;
+            temperatureIncrease = 1f;
         } else
         {
-            warming = 0;
+            temperatureIncrease = 0;
         }
         if (dayAndNightControl.isCurrentlyNight())
         {
@@ -72,31 +76,26 @@ public class TemperatureController : MonoBehaviour {
         {
             nightFreeze = 0;
         }
-        temperature = temperature - (wetFreeze * wetFactor * Time.deltaTime + nightFreeze * indoorFactor * Time.deltaTime);
+
+        temperatureDecrease = wetFreeze + nightFreeze * indoorFactor;
+
         if (temperature < 0f)
         {
             temperature = 0;
         }
-        temperature = temperature + (warming * Time.deltaTime);
+
+        // Berechne die aktuelle Temperatur //
+
+        temperature = temperature - temperatureDecrease * Time.deltaTime + temperatureIncrease * Time.deltaTime;
+
         if (temperature > maxTemperature)
         {
             temperature = maxTemperature;
         }
-        if (temperature < 50f)
-        {
-            thermoImage.GetComponentInChildren<Image>().sprite = thermoFillCold;
-        } else
-        {
-            thermoImage.GetComponentInChildren<Image>().sprite = thermoFillSprite;
-        }
-        // if (temperature < 20) {
-            // Spiele Frieren Sound ab
-            // StartCoroutine  nach x Sekunden Ohnmacht
-        //}
-        // else {
-        // Stoppe Coroutine wieder
-        //}
-        thermoImage.fillAmount = temperature / maxTemperature;
+
+        // Aktualisiere das UI-Thermometer entsprechend der Temperatur //
+
+        updateThermometerUIState(temperature);
     }
 
     public float getTemperature()
@@ -107,5 +106,18 @@ public class TemperatureController : MonoBehaviour {
     public float getMaxTemperature()
     {
         return maxTemperature;
+    }
+
+    private void updateThermometerUIState(float temperature)
+    {
+        if (temperature < 50f)
+        {
+            thermoImage.GetComponentInChildren<Image>().sprite = thermoFillCold;
+        }
+        else
+        {
+            thermoImage.GetComponentInChildren<Image>().sprite = thermoFillSprite;
+        }
+        thermoImage.fillAmount = temperature / maxTemperature;
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
+// Klasse regelt das Abbauen und Aufnehmen von Stein //
+
 public class GetStone : PickableObject
 { 
     GameObject equipedStonePickaxe;
@@ -44,7 +46,7 @@ public class GetStone : PickableObject
     {
         if (Input.GetMouseButtonDown(0) && !pickaxeAnim.isPlaying)
         {       
-                PickUp(myCamera.ScreenPointToRay(crosshairPos.position));
+            PickUp(myCamera.ScreenPointToRay(crosshairPos.position));
         }     
         if (Input.GetKeyDown(KeyCode.Delete)) {
             DisableText();
@@ -59,19 +61,15 @@ public class GetStone : PickableObject
             {
                 if (equipedStonePickaxe.activeSelf == true)
                 {
-
                     text.enabled = false;
                     Outcome -= 1;
 
                     if (inventoryItem.picSound != null)
                     {
-
                         AudioSource.PlayClipAtPoint(inventoryItem.picSound, player.transform.position);
-
                     }
                     if (Outcome <= 0)
                     {
-
                         GameObject.Destroy(gameObject);
 
                         for (int i = 0; i < 6; i++)

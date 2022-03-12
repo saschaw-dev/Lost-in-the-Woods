@@ -19,7 +19,7 @@ MonoBehaviour:
   equiped: 0
   filling: 0
   damage: 0
-  blockDamage: 0
+  blockDamage: 25
   useAnimation: {fileID: 0}
   useAnima: {fileID: 0}
   useSound: {fileID: 0}

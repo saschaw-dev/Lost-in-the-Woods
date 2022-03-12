@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Klasse regelt die Interaktion mit einem Campfeuer //
+
 public class CampFire : MonoBehaviour {
 
     ParticleSystem fireEffect;
@@ -62,7 +64,7 @@ public class CampFire : MonoBehaviour {
         fireEffect.Play();
         audioSource.Play();
         light.enabled = true;
-        playerScript.isInWarmingArea = true; // wenn Spieler Feuer aktiviert hat, ist er nah am Feuer
+        playerScript.isInWarmingArea = true;
         warmIcon.color = notTransparent;
     }
 
@@ -71,11 +73,13 @@ public class CampFire : MonoBehaviour {
         fireEffect.Stop();
         audioSource.Stop();
         light.enabled = false;
+        playerScript.isInWarmingArea = false;
+        warmIcon.color = transparent;
     }
 
     public void interactWithCampFire()
     {
-        if (Physics.Raycast(ray, out hit, 5))//hat dieser Strahl etwas getroffen?
+        if (Physics.Raycast(ray, out hit, 1))//hat dieser Strahl etwas getroffen? MaxDistance muss niedrig (<=1) sein, weil es sonst möglich ist, diesen von außerhalb zu aktivieren
         {
             if (hit.collider.gameObject == gameObject)//war es dieses GO?
             {
@@ -107,7 +111,7 @@ public class CampFire : MonoBehaviour {
     {
         if (other.gameObject == player && isFireOn)
         {
-            playerScript.setIsInFire(true); // Player is in fire
+            playerScript.setIsInFire(true);
             isInArea = true;
         }
     }
@@ -116,7 +120,7 @@ public class CampFire : MonoBehaviour {
     {
         if (other.gameObject == player)
         {
-            playerScript.setIsInFire(false); // Player is not in fire
+            playerScript.setIsInFire(false);
             isInArea = false;
         }
     }
@@ -125,9 +129,7 @@ public class CampFire : MonoBehaviour {
     {
         if (playerScript.getIsInFire() && !isFireOn)
         {
-            playerScript.setIsInFire(false); /* falls der Spieler noch im Collider des Lagerfeuers steht, und Player.isInFire auf "true" ist, 
-            aber das Feuer schon ausgeschaltet wurde, 
-            dann setze Player.isInFire auf "false"*/
+            playerScript.setIsInFire(false);
         }
         if (playerScript.getIsInFire())
         {

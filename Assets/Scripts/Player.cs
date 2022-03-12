@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     GameObject equipedStone;
     GameObject equipedWood;
     GameObject equipedLeave;
+    GameObject equipedMeat;
+    GameObject equipedWolfHide;
     GameObject wallPlaceholder;
     GameObject floorTilePlaceholder;
     GameObject foundationPlaceholder;
@@ -28,36 +30,49 @@ public class Player : MonoBehaviour
     PlayerHealth playerHealth;
     Build buildScript;
 
-    float moveSpeed = 5F;
-    float gravity = 12F;
-    float jumpPower = 6F;
+    // Inspektorvariablen ///////////////////////
+    public float walkingSpeed;
+    public float gravity;
+    public float jumpHeight;
+    public float jumpStaminaCost;
+    public float staminaReg;
+    public float hungerSpeed;
+    public float thirstSpeed;
+    public float runningSpeed;
+    public float runStaminaCost;
+    public float volume = 0.1F; // Lautstärke
+    public bool equiped = false;
+    public AudioClip stepsSound;
+    public AudioClip wheezeSound;
+    public AudioClip jumpSound;
+    public static bool isDying = false;
+    public bool isWet = false;
+    public bool isInWarmingArea = false;
+    public float criticalHealthRate;
+    public AudioClip heartBeat;
+    ////////////////////////////////////////////////
+    private bool isRunning = false;
     float run = 0.5F;
     private float xRotate, yRotate;
-    public static bool isDying = false;
     //Dauer zwischen den Schritten
     float stepLength = 0.3F;
     //Zeit seit letztem Schritt
     float delay = 0;
-    public AudioClip stepsSound;
-    public AudioClip wheezeSound;
-    public AudioClip jumpSound;
-    //Lautstärke
-    public float volume = 0.1F;
-    public bool equiped = false;
     Vector3 moveDirection;
     Vector3 itemPos; // ItemPosition vor den Augen der Kamera
     Quaternion rotation;
     Camera myCamera;
     Ray ray;
-    private float staminaUse = 5;
-    public bool isWet = false;
     private bool isIndoor = false; // Read-only
     private bool isInFire = false; // Read-only
-    public bool isInWarmingArea = false;
-    public string test = "";
     Image indoorIcon;
+    Image bloodScreen;
     Color transparent;
     Color notTransparent;
+    float timeSinceAudioStart = 0f;
+    bool audioIsPlaying = false;
+    float pauseTime = 1f; // in Sekunden
+    //bool isFlying = false;
 
     //wird zu Beginn ausgeführt, auch wenn Gameobject deaktiviert
     private void Awake()
@@ -74,6 +89,7 @@ public class Player : MonoBehaviour
         controller = GetComponent<CharacterController>();
         rotation = transform.rotation;
         indoorIcon = GameObject.Find("Indoor").GetComponent<Image>();
+        bloodScreen = GameObject.Find("BloodScreen").GetComponent<Image>();
         equipedAxe = GameObject.Find("EquipedAxe");
         equipedAxe.SetActive(equiped);
         equipedBow = GameObject.Find("EquipedBow");
@@ -92,6 +108,10 @@ public class Player : MonoBehaviour
         equipedWood.SetActive(false);
         equipedLeave = GameObject.Find("EquipedLeave");
         equipedLeave.SetActive(false);
+        equipedMeat = GameObject.Find("EquipedMeat");
+        equipedMeat.SetActive(false);
+        equipedWolfHide = GameObject.Find("EquipedWolfHide");
+        equipedWolfHide.SetActive(false);
         wallPlaceholder = GameObject.Find("WallPlaceholder");
         wallPlaceholder.SetActive(false);
         floorTilePlaceholder = GameObject.Find("FloorTilePlaceholder");
@@ -115,11 +135,12 @@ public class Player : MonoBehaviour
         transparent.a = 0.35f;
         notTransparent = new Color(1f, 1f, 1f, 1f);
         indoorIcon.color = transparent;
+        bloodScreen.enabled = false;
     }
 
     void initializeStats()
     {
-        playerStamina.stamina = 100;
+        playerStamina.stamina = 100f;
         PlayerHealth.playerHealth = PlayerHealth.playerMaxHealth;
         HungerController.RaiseHunger(100f);
         ThirstController.RaiseThirst(100f);
@@ -134,6 +155,8 @@ public class Player : MonoBehaviour
         itemPos = transform.position + new Vector3(0.4F, 0, 0.4F);
         StepSounds();
         checkIfPlayerIsIndoor();
+        CriticalHealthState();
+        //fly();
     }
 
     public bool getIsIndoor()
@@ -166,19 +189,43 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void CriticalHealthState()
+    {
+        if (PlayerHealth.playerHealth/PlayerHealth.playerMaxHealth < criticalHealthRate)
+        {
+            // Zeige Blutbildschirm
+            bloodScreen.enabled = true;
+            if (audioIsPlaying)
+            {
+                timeSinceAudioStart += Time.deltaTime;
+            }
+            // Starte Audioclip nachdem dieser und eine Wartezeit vorbei sind
+            if (timeSinceAudioStart >= (heartBeat.length + pauseTime) || !audioIsPlaying)
+            {
+                timeSinceAudioStart = 0f;
+                AudioSource.PlayClipAtPoint(heartBeat, transform.position, 1.0f);
+                audioIsPlaying = true;
+            }
+        } else
+        {
+            bloodScreen.enabled = false;
+            audioIsPlaying = false;
+        }
+    }
+
     public void UpdateStamina()
     {
-        playerStamina.RaiseStamina(run * Time.deltaTime);  //dann regeneriere Ausdauer durch Aufruf der Methode RaiseStamina
+        playerStamina.RaiseStamina(staminaReg * Time.deltaTime);  //dann regeneriere Ausdauer durch Aufruf der Methode RaiseStamina
     }
 
     public void UpdateHunger()
     {    
-        HungerController.LowerHunger(run * Time.deltaTime);
+        HungerController.LowerHunger(hungerSpeed * Time.deltaTime);
     }
 
     public void UpdateThirst()
     {    
-        ThirstController.LowerThirst(run * Time.deltaTime);
+        ThirstController.LowerThirst(thirstSpeed * Time.deltaTime);
     }
 
     public void DieOfThirstOrHunger()
@@ -216,6 +263,8 @@ public class Player : MonoBehaviour
         if (ip.itemName == "wood") currentGameObject = equipedWood;
         if (ip.itemName == "fiber") currentGameObject = equipedFiber;
         if (ip.itemName == "leave") currentGameObject = equipedLeave;
+        if (ip.itemName == "meat") currentGameObject = equipedMeat;
+        if (ip.itemName == "wolfHide") currentGameObject = equipedWolfHide;
         if (ip.itemName == "wall") currentGameObject = wallPlaceholder;
         if (ip.itemName == "floorTile") currentGameObject = floorTilePlaceholder;
         if (ip.itemName == "foundation") currentGameObject = foundationPlaceholder;
@@ -276,45 +325,66 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void fly()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            moveDirection.y = jumpHeight;
+            controller.Move(new Vector3(transform.forward.x * Time.deltaTime, moveDirection.y * Time.deltaTime, transform.forward.z + Time.deltaTime));
+        }
+    }
+
     private void MovePlayer()
     {
-        if (controller.isGrounded)
-        {
-            if (Input.GetKey(KeyCode.LeftShift) && playerStamina.stamina > run / 10) run = 3F;
-            else
-            {
-                run = 1F;
-            }
-            moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-            moveDirection *= moveSpeed * run;
-            moveDirection = transform.TransformDirection(moveDirection);
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                moveDirection.y = jumpPower;
-                controller.Move(moveDirection * Time.deltaTime);
-                playerStamina.LowerStamina(jumpPower * 20f * Time.deltaTime); // Springen verbraucht auch Ausdauer
-                AudioSource.PlayClipAtPoint(jumpSound, gameObject.transform.position);
-            }
-
-        }
-        else
+        if (!controller.isGrounded)
         {
             moveDirection.y -= gravity * Time.deltaTime;
-        }
+        } else
+        {
+            if (Input.GetKey(KeyCode.LeftShift) && playerStamina.stamina > runStaminaCost * Time.deltaTime)
+            {
+                isRunning = true;
+                playerStamina.LowerStamina(runStaminaCost * Time.deltaTime);
+            }
+            else
+            {
+                isRunning = false;
+            }
+            if (Input.GetKeyUp(KeyCode.LeftShift)) // Spieler hat aufgehört zu rennen
+            {
+                AudioSource.PlayClipAtPoint(wheezeSound, gameObject.transform.position);
+            }
+            if (!Input.GetKey(KeyCode.LeftShift) && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.S)))
+            {
+                playerStamina.LowerStamina(staminaReg * Time.deltaTime); // Beim Gehen verbraucht Spieler soviel Ausdauer, wie er regeneriert
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                moveDirection = new Vector3(Input.GetAxis("Horizontal"),-gravity *Time.deltaTime, Input.GetAxis("Vertical"));
+            } else
+            {
+                moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            }
 
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            playerStamina.LowerStamina(run * staminaUse*Time.deltaTime); //Beim Rennen verbraucht der Spieler Ausdauer
+            if (isRunning)
+            {
+                moveDirection *= runningSpeed;
+            } else
+            {
+                moveDirection *= walkingSpeed;
+            }
+
+            moveDirection = transform.TransformDirection(moveDirection);
+
+            if (Input.GetKeyDown(KeyCode.Space) && playerStamina.stamina > jumpStaminaCost * Time.deltaTime)
+            {
+                moveDirection.y = jumpHeight;
+                controller.Move(moveDirection * Time.deltaTime);
+                playerStamina.LowerStamina(jumpStaminaCost * Time.deltaTime);
+                AudioSource.PlayClipAtPoint(jumpSound, gameObject.transform.position);
+            }   
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift)) // Spieler hat aufgehört zu rennen
-        {
-            AudioSource.PlayClipAtPoint(wheezeSound, gameObject.transform.position);
-        }
-        if (!Input.GetKey(KeyCode.LeftShift) && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.S))) 
-        {
-            playerStamina.LowerStamina(run * Time.deltaTime); // Beim Gehen verbraucht Spieler soviel Ausdauer, wie er regeneriert
-        }
+        Debug.Log(controller.isGrounded ? "GROUNDED" : "NOT GROUNDED");
         controller.Move(moveDirection * Time.deltaTime);
     }
 
