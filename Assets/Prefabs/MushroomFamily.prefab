@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 64220772056419904}
   m_Layer: 0
   m_Name: Mushroom (1)
-  m_TagString: Untagged
+  m_TagString: pickableObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 64066043376482808}
   m_Layer: 0
   m_Name: Mushroom (2)
-  m_TagString: Untagged
+  m_TagString: pickableObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -453,42 +453,42 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1407519855500474}
-  m_Mesh: {fileID: 4300000, guid: 6ce6f7e454178594fa964426a078b449, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!33 &33147809288635536
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1400415701932232}
-  m_Mesh: {fileID: 4300000, guid: 6ce6f7e454178594fa964426a078b449, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!33 &33272985314271460
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1405532718853580}
-  m_Mesh: {fileID: 4300000, guid: 6ce6f7e454178594fa964426a078b449, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!33 &33361021854968066
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1194990503165142}
-  m_Mesh: {fileID: 4300000, guid: 6ce6f7e454178594fa964426a078b449, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!33 &33488984611726460
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1079495651497790}
-  m_Mesh: {fileID: 4300000, guid: 6ce6f7e454178594fa964426a078b449, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!33 &33942059522933464
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1897839859188710}
-  m_Mesh: {fileID: 4300000, guid: 6ce6f7e454178594fa964426a078b449, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!64 &64066043376482808
 MeshCollider:
   m_ObjectHideFlags: 1

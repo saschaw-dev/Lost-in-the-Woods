@@ -165,16 +165,16 @@ public class Inventory : MonoBehaviour
 
     void UpdateView() //Methode die die Items im Inventar darstellt, falls welche vorhanden sind und ansonsten leere Felder darstellt
     {
-        for (int j = 0; j < itemImageSlots.Length; j++)
-        {
-            if (itemImageSlots[j] != null)
-            {
-                itemImage = itemImageSlots[j].GetComponent<Image>();
-                itemImage.enabled = false;
-                itemImage.GetComponentInChildren<Text>().text = "";
-                itemImageSlots[j].SetActive(false);
-            }
-        }
+        //for (int j = 0; j < itemImageSlots.Length; j++)
+        //{
+        //    if (itemImageSlots[j] != null)
+        //    {
+        //        itemImage = itemImageSlots[j].GetComponent<Image>();
+        //        itemImage.enabled = false;
+        //        itemImage.GetComponentInChildren<Text>().text = "";
+        //        itemImageSlots[j].SetActive(false);
+        //    }
+        //}
 
         int i = 0;
 
@@ -237,7 +237,7 @@ public class Inventory : MonoBehaviour
         for (int j = 0; j < itemImageSlots.Length; j++)
         {
             itemImage = itemImageSlots[j].GetComponent<Image>();
-            if (itemImage.enabled == false || itemImage.GetComponentInChildren<Text>().text != "10")
+            if (itemImage.sprite == null || itemImage.GetComponentInChildren<Text>().text != "10")
             {
                 return false;
             }
@@ -259,12 +259,12 @@ public class Inventory : MonoBehaviour
                 itemImage = itemImageSlots[i].GetComponent<Image>();
                 if (itemImage.GetComponentInChildren<Text>().text != "10")
                 {
-                    if(itemImage.sprite == ip.sprite)
+                    if(itemImage.sprite == ip.sprite || itemImage.sprite == null)
                     {
                         return false;
                     }
                 }  
-                if(itemImage.enabled == false)
+                if(itemImage.enabled == false || itemImage.sprite == null)
                 {
                     return false;
                 }
