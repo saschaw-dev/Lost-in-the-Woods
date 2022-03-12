@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 // Klasse regelt die Temperatur des Spielers //
 
@@ -47,55 +47,58 @@ public class TemperatureController : MonoBehaviour {
         // Es soll nur Schäden durch Kälte geben, nicht durch Wärme
 
         // Weise den Temperaturvariablen Werte zu //
+        if (playerScript != null)
+        {
 
-        if (playerScript.getIsIndoor())
-        {
-            indoorFactor = 0;
-        } else
-        {
-            indoorFactor = 1;
+            if (playerScript.getIsIndoor())
+            {
+                indoorFactor = 0;
+            } else
+            {
+                indoorFactor = 1;
+            }
+            if (playerScript.isWet)
+            {
+                wetFreeze = 0.5f;
+            } else
+            {
+                wetFreeze = 0;
+            }
+            if (playerScript.isInWarmingArea)
+            {
+                temperatureIncrease = 1f;
+            } else
+            {
+                temperatureIncrease = 0;
+            }
+            if (dayAndNightControl.isCurrentlyNight())
+            {
+                nightFreeze = 0.5f;
+            } else
+            {
+                nightFreeze = 0;
+            }
+
+            temperatureDecrease = wetFreeze + nightFreeze * indoorFactor;
+
+            if (temperature < 0f)
+            {
+                temperature = 0;
+            }
+
+            // Berechne die aktuelle Temperatur //
+
+            temperature = temperature - temperatureDecrease * Time.deltaTime + temperatureIncrease * Time.deltaTime;
+
+            if (temperature > maxTemperature)
+            {
+                temperature = maxTemperature;
+            }
+
+            // Aktualisiere das UI-Thermometer entsprechend der Temperatur //
+
+            updateThermometerUIState(temperature);
         }
-        if (playerScript.isWet)
-        {
-            wetFreeze = 0.5f;
-        } else
-        {
-            wetFreeze = 0;
-        }
-        if (playerScript.isInWarmingArea)
-        {
-            temperatureIncrease = 1f;
-        } else
-        {
-            temperatureIncrease = 0;
-        }
-        if (dayAndNightControl.isCurrentlyNight())
-        {
-            nightFreeze = 0.5f;
-        } else
-        {
-            nightFreeze = 0;
-        }
-
-        temperatureDecrease = wetFreeze + nightFreeze * indoorFactor;
-
-        if (temperature < 0f)
-        {
-            temperature = 0;
-        }
-
-        // Berechne die aktuelle Temperatur //
-
-        temperature = temperature - temperatureDecrease * Time.deltaTime + temperatureIncrease * Time.deltaTime;
-
-        if (temperature > maxTemperature)
-        {
-            temperature = maxTemperature;
-        }
-
-        // Aktualisiere das UI-Thermometer entsprechend der Temperatur //
-
-        updateThermometerUIState(temperature);
     }
 
     public float getTemperature()
@@ -112,12 +115,12 @@ public class TemperatureController : MonoBehaviour {
     {
         if (temperature < 50f)
         {
-            thermoImage.GetComponentInChildren<Image>().sprite = thermoFillCold;
+            // thermoGO.GetComponentInChildren<Image>().image = thermoFillCold;
         }
         else
         {
-            thermoImage.GetComponentInChildren<Image>().sprite = thermoFillSprite;
+            //thermoImage.GetComponentInChildren<Image>().sprite = thermoFillSprite;
         }
-        thermoImage.fillAmount = temperature / maxTemperature;
+        // thermoImage.fillAmount = temperature / maxTemperature;
     }
 }

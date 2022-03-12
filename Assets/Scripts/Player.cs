@@ -50,6 +50,7 @@ public class Player : MonoBehaviour
     public bool isInWarmingArea = false;
     public float criticalHealthRate;
     public AudioClip heartBeat;
+    public Ray ray2;
     ////////////////////////////////////////////////
     private bool isRunning = false;
     float run = 0.5F;
@@ -61,6 +62,7 @@ public class Player : MonoBehaviour
     Vector3 moveDirection;
     Vector3 itemPos; // ItemPosition vor den Augen der Kamera
     Quaternion rotation;
+    GameObject mainCamera;
     Camera myCamera;
     Ray ray;
     private bool isIndoor = false; // Read-only
@@ -69,8 +71,10 @@ public class Player : MonoBehaviour
     Image bloodScreen;
     Color transparent;
     Color notTransparent;
+    GameObject crosshair;
     float timeSinceAudioStart = 0f;
     bool audioIsPlaying = false;
+    protected Transform crosshairPos;
     float pauseTime = 1f; // in Sekunden
     //bool isFlying = false;
 
@@ -80,6 +84,10 @@ public class Player : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         craftingPanel = GameObject.Find("CraftingPanel");
+        crosshair = GameObject.Find("Crosshair");
+        crosshairPos = crosshair.GetComponent<Transform>();
+        mainCamera = GameObject.Find("Main Camera");
+        myCamera = mainCamera.GetComponent<Camera>();
     }
 
 
@@ -156,6 +164,7 @@ public class Player : MonoBehaviour
         StepSounds();
         checkIfPlayerIsIndoor();
         CriticalHealthState();
+        PickUpObject();
         //fly();
     }
 
@@ -211,6 +220,11 @@ public class Player : MonoBehaviour
             bloodScreen.enabled = false;
             audioIsPlaying = false;
         }
+    }
+
+    public void PickUpObject()
+    {
+        ray2 = myCamera.ScreenPointToRay(crosshairPos.position);//Schicke jeden Frame einen Strahl raus
     }
 
     public void UpdateStamina()

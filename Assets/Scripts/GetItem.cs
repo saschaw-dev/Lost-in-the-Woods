@@ -32,11 +32,10 @@ public class GetItem : PickableObject {
             PickUp(myCamera.ScreenPointToRay(crosshairPos.position));
         }
 
-        //Hand-Cursor wird sichtbar, wenn man mit der Maus über einem Objekt ist, das man aufheben kann
+        ray2 = player.GetComponent<Player>().ray2;
+        //Hand-Cursor wird sichtbar, wenn man mit der Maus über einem Objekt ist, das man aufheben kann    
 
-        ray2= myCamera.ScreenPointToRay(crosshairPos.position);//Schicke jeden Frame einen Strahl raus
-
-        if (Physics.Raycast(ray2, out hit2,5))//hat dieser Strahl etwas getroffen?
+        if (Physics.Raycast(ray2, out hit2,30))//hat dieser Strahl etwas getroffen?
         {
             if (hit2.collider.gameObject == gameObject)//war es dieses GO?
             {
