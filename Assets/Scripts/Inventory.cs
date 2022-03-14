@@ -6,7 +6,7 @@ using UnityEngine.UI; //Für UI-Elemente, wie z.B. Image etc.
 [Serializable]
 public class Inventory : MonoBehaviour
 {
-    public GameObject[] itemImageSlots = new GameObject[9]; // itemImageSlots sind nicht die Kacheln selbst, sondern das weiße GO darüber!
+    public GameObject[] itemImageSlots = new GameObject[10]; // itemImageSlots sind nicht die Kacheln selbst, sondern das weiße GO darüber!
     public Dictionary<InventoryItem, int> items = new Dictionary<InventoryItem, int>();
     private GameObject player;
     GameObject inventoryPanel;
@@ -29,7 +29,7 @@ public class Inventory : MonoBehaviour
     Text tipLabelText;
     Text tipLabelText2;
     Player playerScript;
-    public GameObject[] itemKeys = new GameObject[9]; // Ordnet jedem ItemImage das InventoryItem zu
+    public GameObject[] itemKeys = new GameObject[10]; // Ordnet jedem ItemImage das InventoryItem zu
     Text itemKeyText;
     Build buildScript;
     GameObject itemLabel;
@@ -165,16 +165,16 @@ public class Inventory : MonoBehaviour
 
     void UpdateView() //Methode die die Items im Inventar darstellt, falls welche vorhanden sind und ansonsten leere Felder darstellt
     {
-        //for (int j = 0; j < itemImageSlots.Length; j++)
-        //{
-        //    if (itemImageSlots[j] != null)
-        //    {
-        //        itemImage = itemImageSlots[j].GetComponent<Image>();
-        //        itemImage.enabled = false;
-        //        itemImage.GetComponentInChildren<Text>().text = "";
-        //        itemImageSlots[j].SetActive(false);
-        //    }
-        //}
+        for (int j = 0; j < itemImageSlots.Length; j++)
+        {
+            if (itemImageSlots[j] != null)
+            {
+                itemImage = itemImageSlots[j].GetComponent<Image>();
+                itemImage.enabled = false;
+                itemImage.GetComponentInChildren<Text>().text = "";
+                itemImageSlots[j].SetActive(false);
+            }
+        }
 
         int i = 0;
 
