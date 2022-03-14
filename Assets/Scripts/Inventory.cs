@@ -165,16 +165,16 @@ public class Inventory : MonoBehaviour
 
     void UpdateView() //Methode die die Items im Inventar darstellt, falls welche vorhanden sind und ansonsten leere Felder darstellt
     {
-        //for (int j = 0; j < itemImageSlots.Length; j++)
-        //{
-        //    if (itemImageSlots[j] != null)
-        //    {
-        //        itemImage = itemImageSlots[j].GetComponent<Image>();
-        //        itemImage.enabled = false;
-        //        itemImage.GetComponentInChildren<Text>().text = "";
-        //        itemImageSlots[j].SetActive(false);
-        //    }
-        //}
+        for (int j = 0; j < itemImageSlots.Length; j++)
+        {
+            if (itemImageSlots[j] != null)
+            {
+                itemImage = itemImageSlots[j].GetComponent<Image>();
+                itemImage.enabled = false;
+                itemImage.GetComponentInChildren<Text>().text = "";
+                itemImageSlots[j].SetActive(false);
+            }
+        }
 
         int i = 0;
 
