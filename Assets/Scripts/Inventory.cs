@@ -165,16 +165,16 @@ public class Inventory : MonoBehaviour
 
     void UpdateView() //Methode die die Items im Inventar darstellt, falls welche vorhanden sind und ansonsten leere Felder darstellt
     {
-        for (int j = 0; j < itemImageSlots.Length; j++)
-        {
-            if (itemImageSlots[j] != null)
-            {
-                itemImage = itemImageSlots[j].GetComponent<Image>();
-                itemImage.enabled = false;
-                itemImage.GetComponentInChildren<Text>().text = "";
-                itemImageSlots[j].SetActive(false);
-            }
-        }
+        //for (int j = 0; j < itemImageSlots.Length; j++)
+        //{
+        //    if (itemImageSlots[j] != null)
+        //    {
+        //        itemImage = itemImageSlots[j].GetComponent<Image>();
+        //        itemImage.enabled = false;
+        //        itemImage.GetComponentInChildren<Text>().text = "";
+        //        itemImageSlots[j].SetActive(false);
+        //    }
+        //}
 
         int i = 0;
 
@@ -443,5 +443,42 @@ public class Inventory : MonoBehaviour
             }
         }
         return invItem;
+    }
+
+    public void switchItems(GameObject itemImage, GameObject followerItemImage)
+    {
+        List<Text> childrenTexts = new List<Text>(itemImage.GetComponentsInChildren<Text>());
+        Text inventoryItemKey = childrenTexts[1];
+
+        List<Text> childrenTexts2 = new List<Text>(followerItemImage.GetComponentsInChildren<Text>());
+        Text followerItemKey = childrenTexts2[1];
+
+        InventoryItem item = this.getInventoryItemByItemImageText(inventoryItemKey.text);
+        InventoryItem followerItem = this.getInventoryItemByItemImageText(followerItemKey.text);
+
+        if (this.items.ContainsKey(item))
+        {
+            if (this.items.ContainsKey(followerItem))
+            {
+                Dictionary<InventoryItem, int> newItems = new Dictionary<InventoryItem, int>();
+                foreach (InventoryItem key in this.items.Keys) {
+                    if (key == item)
+                    {
+                        newItems.Add(followerItem, this.items[followerItem]);
+                    }
+                    else if (key == followerItem)
+                    {
+                        newItems.Add(item, this.items[item]);
+                    }
+                    else
+                    {
+                        newItems.Add(key, this.items[key]);
+                    }
+                }
+                this.items = newItems;
+
+            }
+        }
+        this.UpdateView();
     }
 }
