@@ -200,18 +200,18 @@ public class Craft : MonoBehaviour {
     {
         //if(!playerInventory.IsInventoryFull(ip))
         //{
-            foreach (var current in playerInventory.items)
+            foreach (InventoryTile slot in playerInventory.slots)
             {
-                if (ip.ingredient1 == current.Key.itemNumber)
+                if (ip.ingredient1 == slot.getInventoryItem().itemNumber)
                 {
                     //richtiges Item im Inventar gefunden
 
-                    if (ip.units1 <= current.Value)
+                    if (ip.units1 <= slot.getNumberOfItems())
                     {
-                        craftingChain.Add(current.Key);
+                        craftingChain.Add(slot.getInventoryItem());
 
                         //dann wiederhole das Ganze für Zutat2:
-                        foreach (var current2 in playerInventory.items)
+                        foreach (InventoryTile slot2 in playerInventory.slots)
                         {
                             if (ip.ingredient2 == 0)
                             {
@@ -219,14 +219,14 @@ public class Craft : MonoBehaviour {
                                 return IsInventoryNotFull(craftingChain, ip);
                             }
 
-                            if (ip.ingredient2 == current2.Key.itemNumber)
+                            if (ip.ingredient2 == slot2.getInventoryItem().itemNumber)
                             {
                                 //richtiges Item im Inventar gefunden
-                                if (ip.units2 <= current2.Value)
+                                if (ip.units2 <= slot2.getNumberOfItems())
                                 {
-                                    craftingChain.Add(current2.Key);
+                                    craftingChain.Add(slot2.getInventoryItem());
                                     //dann wiederhole das Ganze für Zutat3:
-                                    foreach (var current3 in playerInventory.items)
+                                    foreach (InventoryTile slot3 in playerInventory.slots)
                                     {
                                         if (ip.ingredient3 == 0)
                                         {
@@ -234,12 +234,12 @@ public class Craft : MonoBehaviour {
                                             return IsInventoryNotFull(craftingChain, ip);
                                         }
 
-                                        if (ip.ingredient3 == current3.Key.itemNumber)
+                                        if (ip.ingredient3 == slot3.getInventoryItem().itemNumber)
                                         {
                                             //richtiges Item im Inventar gefunden
-                                            if (ip.units3 <= current3.Value)
+                                            if (ip.units3 <= slot3.getNumberOfItems())
                                             {
-                                                craftingChain.Add(current3.Key);
+                                                craftingChain.Add(slot3.getInventoryItem());
                                                 //Menge ist vorhanden
                                                 return IsInventoryNotFull(craftingChain, ip);
                                             }
