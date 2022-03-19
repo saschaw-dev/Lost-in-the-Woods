@@ -156,7 +156,7 @@ public class ItemUse : MonoBehaviour {
          */
         if (!myAnimation)
         {
-            if(!playerInventory.items.ContainsKey(ip) || playerInventory.items[ip] == 0)
+            if(!playerInventory.slotsContainsItem(ip))
             {
                 if(handImage)
                 handImage.sprite = null;//Entferne Item Pic aus Hand Pic
@@ -166,8 +166,7 @@ public class ItemUse : MonoBehaviour {
                 buildScript.CancelBlockPlacement();
             }
         }
-        else if ((!playerInventory.items.ContainsKey(ip) && myAnimation.isPlaying == false) || 
-            (playerInventory.items[ip] == 0 && myAnimation.isPlaying == false))//Wenn Animation fertig gespielt und letztes Item verbraucht
+        else if (!playerInventory.slotsContainsItem(ip) && myAnimation.isPlaying == false)//Wenn Animation fertig gespielt und letztes Item verbraucht
         {
             handImage.sprite = null;//Entferne Item Pic aus Hand Pic
             InventoryItem.lastEquiped = false;//Setze Equiped wieder auf False
@@ -182,7 +181,7 @@ public class ItemUse : MonoBehaviour {
         {
             if (!myAnimation)
             {
-                if(playerInventory.items[ip] % 10 == 0)
+                if(playerInventory.slotsContainsOnlyFullStacksOfItem(ip))
                 {
                     switcher = false;
                     handImage.sprite = null;//Entferne Item Pic aus Hand Pic
@@ -195,7 +194,7 @@ public class ItemUse : MonoBehaviour {
                     }
                 }
             }
-            else if (playerInventory.items[ip] % 10 == 0 && myAnimation.isPlaying == false)//Wenn aktiver Stapel verbraucht ist und Animation fertig gespielt
+            else if (playerInventory.slotsContainsOnlyFullStacksOfItem(ip) && myAnimation.isPlaying == false)//Wenn aktiver Stapel verbraucht ist und Animation fertig gespielt
             {
                 switcher = false;
                 handImage.sprite = null;//Entferne Item Pic aus Hand Pic

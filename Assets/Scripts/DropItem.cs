@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class DropItem : MonoBehaviour, IDropHandler {
 
+    public List<GameObject> itemImages;
     Inventory playerInventory;
     Inventory chestInventory;
     RectTransform myRectTransform;
@@ -52,6 +53,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
             invPanel = GameObject.Find("InventoryPanel");
         }
         rectTransformInvPanel = invPanel.GetComponent<RectTransform>();
+        
     }
 	
 	// Update is called once per frame
@@ -106,7 +108,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
             } else
             {
                 // Item irgendwo außerhalb gedroppt?
-                chestInventory.RemoveItem(ip);
+                chestInventory.DropFromInventory(ip);
             }
         }
         else
@@ -149,8 +151,30 @@ public class DropItem : MonoBehaviour, IDropHandler {
                         // außerhalb der Truhe und außerhalb des Inventars gedroppt 
                         if (playerInventory.isHandEmpty())
                         {
-                            playerInventory.RemoveItem(ip);
+                            playerInventory.DropFromInventory(ip);
                         }
+                    }
+                } else
+                {
+                    int i = 0;
+                    // dropped within the inventory, but outside the hand tile
+                    foreach (GameObject itemImage in itemImages)
+                    {
+                        if (RectTransformUtility.RectangleContainsScreenPoint(itemImage.GetComponent<RectTransform>(), Input.mousePosition, null))
+                        {
+                            
+
+                            // dropped within itemImage 'itemImage'
+                            if (itemImage.GetComponent<Image>().sprite != null)
+                            {
+                                playerInventory.switchItems(itemImage, eventData.pointerDrag);
+                            } else
+                            {
+                                // item dropped in an empty tile
+                                playerInventory.placeItemOnEmptyTile(itemImage, eventData.pointerDrag);
+                            }
+                        }
+                        i++;
                     }
                 }
             }
