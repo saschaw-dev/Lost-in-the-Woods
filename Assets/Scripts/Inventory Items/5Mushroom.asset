@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,10 +13,10 @@ MonoBehaviour:
   m_Name: 5Mushroom
   m_EditorClassIdentifier: 
   itemName: Mushroom
-  itemLabel: Pilz
+  itemLabel: 
   sprite: {fileID: 21300000, guid: 908d2a9ec6a119f46be79b8c1ddbda3f, type: 3}
   picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
-  prefab: {fileID: 1585967021637106, guid: 8d89ce70e271aa84889a292bb01c737f, type: 2}
+  prefab: {fileID: 1585967021637106, guid: 8d89ce70e271aa84889a292bb01c737f, type: 3}
   equiped: 1
   filling: 20
   damage: 10

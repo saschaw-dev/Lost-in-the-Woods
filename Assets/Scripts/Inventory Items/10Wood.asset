@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,10 +13,10 @@ MonoBehaviour:
   m_Name: 10Wood
   m_EditorClassIdentifier: 
   itemName: wood
-  itemLabel: Holz
+  itemLabel: 
   sprite: {fileID: 21300000, guid: cf9ca5b5ae9e9a948aeb9b3f7cd299b4, type: 3}
   picSound: {fileID: 8300000, guid: eeb44abbd50d2134f977aeb6341ea339, type: 3}
-  prefab: {fileID: 1806208171967866, guid: c3b446faa18a940438e79260cea01bd3, type: 2}
+  prefab: {fileID: 1806208171967866, guid: c3b446faa18a940438e79260cea01bd3, type: 3}
   equiped: 1
   filling: 0
   damage: 0

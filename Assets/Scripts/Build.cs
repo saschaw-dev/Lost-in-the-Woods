@@ -299,7 +299,7 @@ public class Build : MonoBehaviour {
         if (currentItem.itemNumber == 17)
         {
             // Dann instanziere zusätzlich ein Truhen-UI und setze wichtige Variablen!
-            instantiateChestUI(block);
+            //instantiateChestUI(block);
         }
     }
 
@@ -330,8 +330,12 @@ public class Build : MonoBehaviour {
         return Vector3.Scale(max - min, obj.transform.localScale);
     }
 
-    private void instantiateChestUI(GameObject chestClone)
+    public void instantiateChestUI()
     {
+        if (chestPanel == null)
+        {
+            chestPanel = GameObject.Find("ChestPanel");
+        }
         int z = chestPanel.transform.GetSiblingIndex();
         GameObject oldChestPanel = chestPanel;
         chestPanel = (GameObject)Instantiate(chestPanel, chestPanel.transform.position, chestPanel.transform.localRotation);
@@ -344,10 +348,10 @@ public class Build : MonoBehaviour {
         Inventory chestInventory = block.GetComponent<Inventory>();
         chestInventory.setChestPanel(chestPanel);
 
-        for (int i = 0; i < chestInventory.itemImageSlots.Length; i++)
-        {
-            chestInventory.itemImageSlots[i] = chestPanel.transform.GetChild(0).GetChild(2 + i).GetChild(0).gameObject;
-        }
+        //for (int i = 0; i < chestInventory.itemImageSlots.Length; i++)
+        //{
+        //    chestInventory.itemImageSlots[i] = chestPanel.transform.GetChild(0).GetChild(2 + i).GetChild(0).gameObject;
+        //}
 
         if (handImage != null) handImage.GetComponent<DropItem>().addChest(chestPanel, block);
     }

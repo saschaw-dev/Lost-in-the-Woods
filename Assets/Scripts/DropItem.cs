@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,6 +8,7 @@ using UnityEngine.UI;
 public class DropItem : MonoBehaviour, IDropHandler {
 
     public List<GameObject> itemImages;
+    public List<GameObject> chestItemImages;
     Inventory playerInventory;
     Inventory chestInventory;
     RectTransform myRectTransform;
@@ -61,6 +61,16 @@ public class DropItem : MonoBehaviour, IDropHandler {
 		
 	}
 
+    public Inventory getChestInventory()
+    {
+        return this.chestInventory;
+    }
+
+    public void setChestInventory(Inventory chestInventory)
+    {
+        this.chestInventory = chestInventory;
+    }
+
     public void OnDrop(PointerEventData eventData)
     {
         string itemKey = eventData.pointerDrag.transform.GetChild(1).GetComponent<Text>().text;
@@ -91,19 +101,44 @@ public class DropItem : MonoBehaviour, IDropHandler {
             // innerhalb der Truhe gedroppt?
             if (RectTransformUtility.RectangleContainsScreenPoint(rectTransformChest, Input.mousePosition, null))
             {
-                // nichts
+                foreach (GameObject chestItemImage in chestItemImages)
+                {
+                    if (RectTransformUtility.RectangleContainsScreenPoint(chestItemImage.GetComponent<RectTransform>(), Input.mousePosition, null))
+                    {
+                        if (chestItemImage.GetComponent<Image>().sprite != null)
+                        {
+                            chestInventory.switchItems(chestItemImage, eventData.pointerDrag);
+                        }
+                        else
+                        {
+                            // item dropped in an empty tile
+                            chestInventory.placeItemOnEmptyTile(chestItemImage, eventData.pointerDrag, false);
+                            chestInventory.removeFollowerItemFromInventorySlots(eventData.pointerDrag);
+                        }
+                    }
+                }
+                    // nichts
+                    // dropped within itemImage 'itemImage'
 
-            // innerhalb des Spielerinventars gedroppt?
+                // innerhalb des Spielerinventars gedroppt?
             } else if (RectTransformUtility.RectangleContainsScreenPoint(rectTransformInvPanel, Input.mousePosition, null))
             {
-                if (playerInventory.AddItem(ip))
+
+                foreach (GameObject itemImage in itemImages)
                 {
-                    // wenn Item erfolgreich ins Spielerinventar gelegt => Item aus der Truhe entfernen
-                    chestInventory.UseItem(ip);
-                }
-                else
-                {
-                    // Kein Platz mehr im Spielerinventar? => Belasse Item in der Truhe
+                    if (RectTransformUtility.RectangleContainsScreenPoint(itemImage.GetComponent<RectTransform>(), Input.mousePosition, null))
+                    {
+                        if (itemImage.GetComponent<Image>().sprite != null)
+                        {
+                            playerInventory.switchItems(itemImage, eventData.pointerDrag);
+                        }
+                        else
+                        {
+                            // item dropped in an empty tile
+                            playerInventory.placeItemOnEmptyTile(itemImage, eventData.pointerDrag, false);
+                        }
+                        chestInventory.removeFollowerItemFromInventorySlots(eventData.pointerDrag);
+                    }
                 }
             } else
             {
@@ -131,20 +166,24 @@ public class DropItem : MonoBehaviour, IDropHandler {
                     // innerhalb der Truhe gedroppt?
                     if (isInChestRectTransform())
                     {
-                        if (chests[activeChestPanel].GetComponent<Inventory>().AddItem(ip))
+                        foreach (GameObject chestItemImage in chestItemImages)
                         {
-                            // wenn Item erfolgreich in die Truhe gelegt => Item aus dem Spielerinventar entfernen
-                        if (!playerInventory.isHandEmpty())
-                        {
-                            playerInventory.AddItemToYourHand(ip);
+                            if (RectTransformUtility.RectangleContainsScreenPoint(chestItemImage.GetComponent<RectTransform>(), Input.mousePosition, null))
+                            {
+                                if (chestItemImage.GetComponent<Image>().sprite != null)
+                                {
+                                    chestInventory.switchItems(chestItemImage, eventData.pointerDrag);
+                                }
+                                else
+                                {
+                                    // item dropped in an empty tile
+                                    chestInventory.placeItemOnEmptyTile(chestItemImage, eventData.pointerDrag, true);
+                                }
+                                playerInventory.removeFollowerItemFromInventorySlots(eventData.pointerDrag);
+                            }
                         }
-                            playerInventory.UseItem(ip);
 
-                        }
-                        else
-                        {
-                            // Kein Platz mehr in der Truhe? => Belasse Item im Spielerinventar
-                        }
+
                     }
                     else
                     {
@@ -171,7 +210,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
                             } else
                             {
                                 // item dropped in an empty tile
-                                playerInventory.placeItemOnEmptyTile(itemImage, eventData.pointerDrag);
+                                playerInventory.placeItemOnEmptyTile(itemImage, eventData.pointerDrag, true);
                             }
                         }
                         i++;

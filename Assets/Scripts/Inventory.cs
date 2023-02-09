@@ -130,6 +130,10 @@ public class Inventory : MonoBehaviour
 
     public void setChestPanel(GameObject chestPanel)
     {
+        if (chestPanel == null)
+        {
+            return;
+        }
         this.chestPanel = chestPanel;
     }
 
@@ -158,6 +162,10 @@ public class Inventory : MonoBehaviour
             }
         } else
         {
+            if (chestPanel == null)
+            {
+                buildScript.instantiateChestUI();
+            }
             if (chestPanel.activeSelf == true)
             {
                 chestPanel.SetActive(false);
@@ -212,11 +220,11 @@ public class Inventory : MonoBehaviour
                     itemKeys[i].GetComponent<Text>().text = slot.getInventoryItem().itemNumber.ToString();
                 }
                 // Set item image pos
-                if (gameObject != GameObject.Find("Chest"))
-                {
-                    // If condition can be removed when the chest panel is fixed
-                    itemImageSlots[i].GetComponentsInChildren<Text>()[2].text = slot.getTilePos().ToString();
-                }
+                //if (gameObject != GameObject.Find("Chest"))
+                //{
+                //    // If condition can be removed when the chest panel is fixed
+                //}
+                itemImageSlots[i].GetComponentsInChildren<Text>()[2].text = slot.getTilePos().ToString();
                 currentItemImage.GetComponentInChildren<Text>().text = slot.getNumberOfItems().ToString();
                 i++;
             }
@@ -290,7 +298,7 @@ public class Inventory : MonoBehaviour
         {
             foreach (InventoryTile slot in slots)
             {
-                if (slot.getInventoryItem().itemNumber == ip.itemNumber && !slot.isInventorySlotFull())
+                if (slot.getInventoryItem() != null && slot.getInventoryItem().itemNumber == ip.itemNumber && !slot.isInventorySlotFull())
                 {
                     slot.addOneItem(ip);
                     UpdateView();
@@ -309,7 +317,7 @@ public class Inventory : MonoBehaviour
         // If there are only full inventory tiles with this 'ip' remove from the last full tile
         foreach (InventoryTile slot in slots)
         {
-            if (slot.getInventoryItem().itemNumber == ip.itemNumber)
+            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemNumber == ip.itemNumber)
             {
                 if (slot.isInventorySlotFull())
                 {
@@ -340,7 +348,6 @@ public class Inventory : MonoBehaviour
         {
             UpdateView();
         }
-        Instantiate(ip.prefab, dropPos.transform.position, Quaternion.identity);
         return isRemovedSuccessfully;
     }
 
@@ -372,6 +379,18 @@ public class Inventory : MonoBehaviour
         disableItemFollower();
 
         return this.RemoveItem(ip);
+    }
+
+    public void removeFollowerItemFromInventorySlots(GameObject followerItemImage)
+    {
+        List<Text> childrenTexts2 = new List<Text>(followerItemImage.GetComponentsInChildren<Text>());
+        Text followerItemKey = childrenTexts2[1];
+        Text followerItemImagePos = childrenTexts2[2];
+
+        InventoryTile slotToBeEmptied = this.slots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
+        slotToBeEmptied.emptyStack();
+
+        UpdateView();
     }
 
     private void disableItemFollower()
@@ -433,6 +452,19 @@ public class Inventory : MonoBehaviour
         {
             tip.GetComponent<Text>().enabled = false;
         }
+    }
+
+    public InventoryItem getInventoryItemByItemImageText(String itemImageText, List<InventoryTile> slots)
+    {
+        InventoryItem invItemWithNumber = null;
+        foreach (InventoryTile slot in slots)
+        {
+            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemNumber.ToString() == itemImageText)
+            {
+                invItemWithNumber = slot.getInventoryItem();
+            }
+        }
+        return invItemWithNumber;
     }
 
     public InventoryItem getInventoryItemByItemImageText(String itemImageText)
@@ -522,11 +554,11 @@ public class Inventory : MonoBehaviour
         InventoryItem item = this.getInventoryItemByItemImageText(inventoryItemKey.text);
         InventoryItem followerItem = this.getInventoryItemByItemImageText(followerItemKey.text);
 
-        if (this.slotsContainsItem(item) && this.slotsContainsItem(followerItem))
+        if (item != null && followerItem != null)
         {
-            InventoryTile itemSlot = this.slots.Find(slot => findItem(slot, item, itemImagePos));
+            InventoryTile itemSlot = this.slots.Find(slot => findItem(slot, inventoryItemKey, itemImagePos));
 
-            InventoryTile followerItemSlot = this.slots.Find(slot => findItem(slot, followerItem, followerItemImagePos));
+            InventoryTile followerItemSlot = this.slots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
 
             List<InventoryTile> slotsCopies = new List<InventoryTile>();
 
@@ -575,7 +607,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     /// <param name="emptyItemImage">The inventory tile GO holding no item pic</param>
     /// <param name="followerItemImage">The inventory tile GO holding the item pic of the follower item</param>
-    public void placeItemOnEmptyTile(GameObject emptyItemImage, GameObject followerItemImage)
+    public void placeItemOnEmptyTile(GameObject emptyItemImage, GameObject followerItemImage, Boolean itemFromPlayerInv)
     {
         List<Text> childrenTexts = new List<Text>(emptyItemImage.GetComponentsInChildren<Text>());
         Text itemImagePos = childrenTexts[2];
@@ -585,13 +617,36 @@ public class Inventory : MonoBehaviour
         Text followerItemImagePos = childrenTexts2[2];
 
         InventoryItem item = this.getInventoryItemByTilePos(itemImagePos.text);
-        InventoryItem followerItem = this.getInventoryItemByItemImageText(followerItemKey.text);
+        InventoryItem followerItem = null;
+        if (itemFromPlayerInv && gameObject.name.Equals("Chest"))
+        {
+            followerItem = this.getInventoryItemByItemImageText(followerItemKey.text, player.GetComponent<Inventory>().slots);
+        } else if (!itemFromPlayerInv && gameObject.name.Equals("Player"))
+        {
+            followerItem = this.getInventoryItemByItemImageText(followerItemKey.text, handImage.GetComponent<DropItem>().getChestInventory().slots);
+        }
+        else
+        {
+            followerItem = this.getInventoryItemByItemImageText(followerItemKey.text, this.slots);
+        }
 
         // Do not allow placing empty images on item images, because dragging of empty tiles should be suppressed!
-        if (this.slotsContainsItem(followerItem))
+        if (followerItem != null)
         {
             InventoryTile emptySlot = findEmptySlotInSlots(itemImagePos.text);
-            InventoryTile followerItemSlot = this.slots.Find(slot => findItem(slot, followerItem, followerItemImagePos));  
+            InventoryTile followerItemSlot = null;
+            if (itemFromPlayerInv && gameObject.name.Equals("Chest"))
+            {
+                followerItemSlot = player.GetComponent<Inventory>().slots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
+            }
+            else if (!itemFromPlayerInv && gameObject.name.Equals("Player"))
+            {
+                followerItemSlot = handImage.GetComponent<DropItem>().getChestInventory().slots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
+            }
+            else
+            {
+                followerItemSlot = this.slots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));  
+            }
 
             List<InventoryTile> slotsCopies = new List<InventoryTile>();
             int followerNumberOfItems = followerItemSlot.getNumberOfItems();
@@ -626,10 +681,10 @@ public class Inventory : MonoBehaviour
         this.UpdateView();
     }
 
-    private bool findItem(InventoryTile slot, InventoryItem item, Text itemImagePos)
+    private bool findItem(InventoryTile slot, Text followerItemKey, Text itemImagePos)
     {
         if (slot.getInventoryItem() != null) {
-            if (slot.getInventoryItem().itemNumber == item.itemNumber)
+            if (slot.getInventoryItem().itemNumber.ToString().Equals(followerItemKey.text))
             {
                 if (itemImagePos.text.Equals(slot.getTilePos().ToString()))
                 {

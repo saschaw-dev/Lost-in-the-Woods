@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,10 +13,10 @@ MonoBehaviour:
   m_Name: 11Leave
   m_EditorClassIdentifier: 
   itemName: leave
-  itemLabel: Blatt
+  itemLabel: 
   sprite: {fileID: 21300000, guid: e528ac160a791384c9421ed83c1435db, type: 3}
   picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
-  prefab: {fileID: 1106214097823318, guid: ed92da4b705fd4746acf86afc4741b2d, type: 2}
+  prefab: {fileID: 1106214097823318, guid: ed92da4b705fd4746acf86afc4741b2d, type: 3}
   equiped: 1
   filling: 0
   damage: 0

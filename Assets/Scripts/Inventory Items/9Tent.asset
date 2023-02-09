@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,7 +13,7 @@ MonoBehaviour:
   m_Name: 9Tent
   m_EditorClassIdentifier: 
   itemName: tent
-  itemLabel: Zelt
+  itemLabel: 
   sprite: {fileID: 21300000, guid: 5cc1634a34b14a54ebd2fb51df099fd1, type: 3}
   picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
   prefab: {fileID: 0}
@@ -25,7 +26,9 @@ MonoBehaviour:
   useSound: {fileID: 0}
   itemNumber: 9
   craftingSpeed: 18
-  craftingText: "5 Fasern,\n20 Bl\xE4tter."
+  craftingText: '5 fiber
+
+    20 leave'
   ingredient1: 4
   ingredient2: 11
   ingredient3: 0

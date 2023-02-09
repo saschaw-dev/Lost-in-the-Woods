@@ -9,6 +9,8 @@ public class Chest : MonoBehaviour {
 
     GameObject handSymbol;
     GameObject crosshair;
+    GameObject handImage;
+    DropItem dropItemScript;
     Inventory chestInventory;
     Image handCursor;
     Image crosshairImage;
@@ -23,14 +25,23 @@ public class Chest : MonoBehaviour {
         crosshair = GameObject.Find("Crosshair");
         handSymbol = GameObject.Find("Hand");
         myCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        handImage = GameObject.Find("HandImage");
         handCursor = handSymbol.GetComponent<Image>();
         crosshairPos = crosshair.GetComponent<Transform>();
         crosshairImage = crosshair.GetComponent<Image>();
+        if (handImage != null)
+        {
+            dropItemScript = handImage.GetComponent<DropItem>();
+        }
     }
 
     // Use this for initialization
     void Start () {
         chestInventory = gameObject.GetComponent<Inventory>();
+        if (handImage != null)
+        {
+            dropItemScript = handImage.GetComponent<DropItem>();
+        }
 	}
 	
 	// Update is called once per frame
@@ -51,6 +62,10 @@ public class Chest : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     chestInventory.OpenOrCloseInventory();
+                    if (dropItemScript != null)
+                    {
+                        dropItemScript.setChestInventory(chestInventory);
+                    }
                     AudioSource.PlayClipAtPoint(chestOpeningClosing, gameObject.transform.position);
                 }
             }
