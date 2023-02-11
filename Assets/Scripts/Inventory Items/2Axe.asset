@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,10 +13,10 @@ MonoBehaviour:
   m_Name: 2Axe
   m_EditorClassIdentifier: 
   itemName: axe
-  itemLabel: Axt
+  itemLabel: 
   sprite: {fileID: 21300000, guid: 4075c4781bb5c9f48ab67a0c9e82ec64, type: 3}
   picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
-  prefab: {fileID: 1109927569504214, guid: 6afee58b2f8d3eb47a3325cce6c17c0f, type: 2}
+  prefab: {fileID: 1109927569504214, guid: 6afee58b2f8d3eb47a3325cce6c17c0f, type: 3}
   equiped: 0
   filling: 0
   damage: 25
@@ -25,11 +26,11 @@ MonoBehaviour:
   useSound: {fileID: 8300000, guid: cbae673751aa8e34395b7afbe64e7f1b, type: 3}
   itemNumber: 2
   craftingSpeed: 20
-  craftingText: '5 Holz,
+  craftingText: '5 wood
 
-    3 Steine,
+    3 stone
 
-    2 Fasern.'
+    2 fiber'
   ingredient1: 10
   ingredient2: 6
   ingredient3: 4

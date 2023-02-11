@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,10 +13,10 @@ MonoBehaviour:
   m_Name: 17Chest
   m_EditorClassIdentifier: 
   itemName: chest
-  itemLabel: Truhe
+  itemLabel: 
   sprite: {fileID: 21300000, guid: 4e0e71859db26a8458cfe87e4052381f, type: 3}
   picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
-  prefab: {fileID: 1603587197792522, guid: 4c6104b26f36eab4d93fcf3ea2f5131c, type: 2}
+  prefab: {fileID: 2437069961316588302, guid: 4c6104b26f36eab4d93fcf3ea2f5131c, type: 3}
   equiped: 0
   filling: 0
   damage: 0
@@ -25,7 +26,7 @@ MonoBehaviour:
   useSound: {fileID: 0}
   itemNumber: 17
   craftingSpeed: 8
-  craftingText: 10 Holz
+  craftingText: 10 wood
   ingredient1: 10
   ingredient2: 0
   ingredient3: 0

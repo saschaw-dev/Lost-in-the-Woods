@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,10 +13,10 @@ MonoBehaviour:
   m_Name: 12Wall
   m_EditorClassIdentifier: 
   itemName: wall
-  itemLabel: Wand
+  itemLabel: 
   sprite: {fileID: 21300000, guid: 690a33055646d4040a67734c9d5a4fb0, type: 3}
   picSound: {fileID: 8300000, guid: 272e353b50907854b89c4198c5848929, type: 3}
-  prefab: {fileID: 1179076797689144, guid: e61ca4a996261034aa18ff62497853ec, type: 2}
+  prefab: {fileID: 1179076797689144, guid: e61ca4a996261034aa18ff62497853ec, type: 3}
   equiped: 0
   filling: 0
   damage: 0
@@ -25,7 +26,7 @@ MonoBehaviour:
   useSound: {fileID: 0}
   itemNumber: 12
   craftingSpeed: 15
-  craftingText: 15 Holz
+  craftingText: 15 wood
   ingredient1: 10
   ingredient2: 0
   ingredient3: 0

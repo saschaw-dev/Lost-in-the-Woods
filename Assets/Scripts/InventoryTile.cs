@@ -161,6 +161,16 @@ public class InventoryTile
     }
 
     /// <summary>
+    /// Empties the item stack of this inventory tile.
+    /// </summary>
+    public void emptyStack()
+    {
+        this.stackSize = 0;
+        this.isEmptyTile = true;
+        this.setInventoryItem(null);
+    }
+
+    /// <summary>
     /// Getter for <code>this.isEmptyTile</code>
     /// </summary>
     /// <returns>The isEmptyTile boolean</returns>
