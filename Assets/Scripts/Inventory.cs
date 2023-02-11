@@ -590,6 +590,152 @@ public class Inventory : MonoBehaviour
         this.UpdateView();
     }
 
+    /// <summary>
+    /// Swaps the position of the dropped item (image) with the targeted item (image) of the inventory ui. 
+    /// This method is executed when the user drops an item (image) from the player inventory on a non-empty tile 
+    /// of the chest inventory ui.
+    /// </summary>
+    /// <param name="itemImage">Inventory tile GO holding an item pic</param>
+    /// <param name="followerItemImage">The image of the dragged player item GO</param>
+    public void switchItemsFromPlayerToChest(GameObject itemImage, GameObject followerItemImage)
+    {
+        List<Text> childrenTexts = new List<Text>(itemImage.GetComponentsInChildren<Text>());
+        Text inventoryItemKey = childrenTexts[1];
+        Text itemImagePos = childrenTexts[2];
+
+        List<Text> childrenTexts2 = new List<Text>(followerItemImage.GetComponentsInChildren<Text>());
+        Text followerItemKey = childrenTexts2[1];
+        Text followerItemImagePos = childrenTexts2[2];
+
+        InventoryItem item = this.getInventoryItemByItemImageText(inventoryItemKey.text);
+        InventoryItem followerItem = player.GetComponent<Inventory>().getInventoryItemByItemImageText(followerItemKey.text);
+
+        if (item != null && followerItem != null)
+        {
+            InventoryTile itemSlot = this.slots.Find(slot => findItem(slot, inventoryItemKey, itemImagePos));
+            List<InventoryTile> playerSlots = player.GetComponent<Inventory>().slots;
+            InventoryTile followerItemSlot = playerSlots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
+
+            List<InventoryTile> slotsCopies = new List<InventoryTile>();
+
+            foreach (InventoryTile slot in this.slots)
+            {
+                if (slot.getTilePos() == itemSlot.getTilePos())
+                {
+                    /* Loop is at index of 'itemSlot' in 'this.slots',
+                    so set tile pos of 'followerItemSlot' to this index */
+                    InventoryTile copy = followerItemSlot.getIdenticalCopy();
+                    copy.setTilePos(slotsCopies.Count);
+                    // Then add it to the new slots list
+                    slotsCopies.Add(copy);
+                }
+                else
+                {
+                    // Add slot to new slots list
+                    slotsCopies.Add(slot);
+                }
+            }
+            this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+
+            List<InventoryTile> playerSlotsCopies = new List<InventoryTile>();
+            playerSlots = player.GetComponent<Inventory>().slots;
+
+            foreach (InventoryTile slot in playerSlots)
+            {
+                if (slot.getTilePos() == followerItemSlot.getTilePos())
+                {
+                    /* Loop is at index of 'followerItemSlot' in 'this.slots',
+                     * so set tile pos of 'itemSlot' to this index */
+                    InventoryTile copy = itemSlot.getIdenticalCopy();
+                    copy.setTilePos(playerSlotsCopies.Count);
+                    // Then add it to the new slots list
+                    playerSlotsCopies.Add(copy);
+                }
+                else
+                {
+                    // Add slot to new slots list
+                    playerSlotsCopies.Add(slot);
+                }
+            }
+            player.GetComponent<Inventory>().slots = getIdenticalCopyOfInventoryTiles(playerSlotsCopies);
+        }
+        player.GetComponent<Inventory>().UpdateView();
+        this.UpdateView();
+    }
+
+    /// <summary>
+    /// Swaps the position of the dropped item (image) with the targeted item (image) of the inventory ui. 
+    /// This method is executed when the user drops an item (image) from the chest inventory on a non-empty tile 
+    /// of the player inventory ui.
+    /// </summary>
+    /// <param name="itemImage">Inventory tile GO holding an item pic</param>
+    /// <param name="followerItemImage">The image of the dragged chest item GO</param>
+    public void switchItemsFromChestToPlayer(GameObject itemImage, GameObject followerItemImage, Inventory chestInventory)
+    {
+        List<Text> childrenTexts = new List<Text>(itemImage.GetComponentsInChildren<Text>());
+        Text inventoryItemKey = childrenTexts[1];
+        Text itemImagePos = childrenTexts[2];
+
+        List<Text> childrenTexts2 = new List<Text>(followerItemImage.GetComponentsInChildren<Text>());
+        Text followerItemKey = childrenTexts2[1];
+        Text followerItemImagePos = childrenTexts2[2];
+
+        InventoryItem item = this.getInventoryItemByItemImageText(inventoryItemKey.text);
+        InventoryItem followerItem = chestInventory.getInventoryItemByItemImageText(followerItemKey.text);
+
+        if (item != null && followerItem != null)
+        {
+            InventoryTile itemSlot = this.slots.Find(slot => findItem(slot, inventoryItemKey, itemImagePos));
+            List<InventoryTile> chestSlots = chestInventory.slots;
+            InventoryTile followerItemSlot = chestSlots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
+
+            List<InventoryTile> slotsCopies = new List<InventoryTile>();
+
+            foreach (InventoryTile slot in this.slots)
+            {
+                if (slot.getTilePos() == itemSlot.getTilePos())
+                {
+                    /* Loop is at index of 'itemSlot' in 'this.slots',
+                    so set tile pos of 'followerItemSlot' to this index */
+                    InventoryTile copy = followerItemSlot.getIdenticalCopy();
+                    copy.setTilePos(slotsCopies.Count);
+                    // Then add it to the new slots list
+                    slotsCopies.Add(copy);
+                }
+                else
+                {
+                    // Add slot to new slots list
+                    slotsCopies.Add(slot);
+                }
+            }
+            this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+
+            List<InventoryTile> chestSlotsCopies = new List<InventoryTile>();
+            chestSlots = chestInventory.slots;
+
+            foreach (InventoryTile slot in chestSlots)
+            {
+                if (slot.getTilePos() == followerItemSlot.getTilePos())
+                {
+                    /* Loop is at index of 'followerItemSlot' in 'this.slots',
+                     * so set tile pos of 'itemSlot' to this index */
+                    InventoryTile copy = itemSlot.getIdenticalCopy();
+                    copy.setTilePos(chestSlotsCopies.Count);
+                    // Then add it to the new slots list
+                    chestSlotsCopies.Add(copy);
+                }
+                else
+                {
+                    // Add slot to new slots list
+                    chestSlotsCopies.Add(slot);
+                }
+            }
+            chestInventory.slots = getIdenticalCopyOfInventoryTiles(chestSlotsCopies);
+        }
+        chestInventory.UpdateView();
+        this.UpdateView();
+    }
+
     private List<InventoryTile> getIdenticalCopyOfInventoryTiles(List<InventoryTile> tiles)
     {
         List<InventoryTile> copy = new List<InventoryTile>();
@@ -664,12 +810,6 @@ public class Inventory : MonoBehaviour
                         
                     }
                     slotsCopies.Add(newEmptyTile);
-                }
-                else if (slot.getTilePos().ToString().Equals(followerItemImagePos.text) && slot.getInventoryItem() == followerItem)
-                {
-                    // Creates a new empty tile with position of the follower item (dragged item)
-                    InventoryTile newFollowerItemSlot = new InventoryTile(slotsCopies.Count);
-                    slotsCopies.Add(newFollowerItemSlot);
                 }
                 else
                 {
