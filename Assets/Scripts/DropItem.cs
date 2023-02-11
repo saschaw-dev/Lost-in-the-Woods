@@ -130,14 +130,15 @@ public class DropItem : MonoBehaviour, IDropHandler {
                     {
                         if (itemImage.GetComponent<Image>().sprite != null)
                         {
-                            playerInventory.switchItems(itemImage, eventData.pointerDrag);
+                            // ToDo: switchItemsFromChestToPlayer
+                            playerInventory.switchItemsFromChestToPlayer(itemImage, eventData.pointerDrag, chestInventory);
                         }
                         else
                         {
                             // item dropped in an empty tile
                             playerInventory.placeItemOnEmptyTile(itemImage, eventData.pointerDrag, false);
+                            chestInventory.removeFollowerItemFromInventorySlots(eventData.pointerDrag);
                         }
-                        chestInventory.removeFollowerItemFromInventorySlots(eventData.pointerDrag);
                     }
                 }
             } else
@@ -172,14 +173,15 @@ public class DropItem : MonoBehaviour, IDropHandler {
                             {
                                 if (chestItemImage.GetComponent<Image>().sprite != null)
                                 {
-                                    chestInventory.switchItems(chestItemImage, eventData.pointerDrag);
+                                    // ToDo: switchItemsFromPlayerToChest
+                                    chestInventory.switchItemsFromPlayerToChest(chestItemImage, eventData.pointerDrag);
                                 }
                                 else
                                 {
                                     // item dropped in an empty tile
                                     chestInventory.placeItemOnEmptyTile(chestItemImage, eventData.pointerDrag, true);
+                                    playerInventory.removeFollowerItemFromInventorySlots(eventData.pointerDrag);
                                 }
-                                playerInventory.removeFollowerItemFromInventorySlots(eventData.pointerDrag);
                             }
                         }
 
@@ -211,6 +213,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
                             {
                                 // item dropped in an empty tile
                                 playerInventory.placeItemOnEmptyTile(itemImage, eventData.pointerDrag, true);
+                                playerInventory.removeFollowerItemFromInventorySlots(eventData.pointerDrag);
                             }
                         }
                         i++;

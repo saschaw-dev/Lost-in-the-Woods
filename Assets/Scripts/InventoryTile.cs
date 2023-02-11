@@ -109,6 +109,20 @@ public class InventoryTile
     }
 
     /// <summary>
+    /// Get an identical copy of the current instance of 'this' class
+    /// </summary>
+    /// <returns>the copy instance</returns>
+    public InventoryTile getIdenticalCopy()
+    {
+        InventoryTile copy = new InventoryTile(this.getInventoryItem(), this.getTilePos());
+        for(int i = 0; i < this.stackSize - 1; i++)
+        {
+            copy.addOneItem(this.getInventoryItem());
+        }
+        return copy;
+    }
+
+    /// <summary>
     /// Adds an item to this tile.
     /// </summary>
     /// <param name="ip">The type of item to be added</param>
