@@ -100,6 +100,15 @@ public class InventoryTile
     }
 
     /// <summary>
+    /// Setter for <code>this.stackSize</code>
+    /// </summary>
+    /// <param name="stackSize"></param>
+    public void setStackSize(int stackSize)
+    {
+        this.stackSize = stackSize;
+    }
+
+    /// <summary>
     /// Getter for the <code>this.stackSize</code>
     /// </summary>
     /// <returns>The number of items that the tile is holding</returns>

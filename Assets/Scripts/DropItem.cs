@@ -107,7 +107,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
                     {
                         if (chestItemImage.GetComponent<Image>().sprite != null)
                         {
-                            chestInventory.switchItems(chestItemImage, eventData.pointerDrag);
+                            chestInventory.onItemDroppedOnItem(chestItemImage, eventData.pointerDrag);
                         }
                         else
                         {
@@ -131,7 +131,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
                         if (itemImage.GetComponent<Image>().sprite != null)
                         {
                             // ToDo: switchItemsFromChestToPlayer
-                            playerInventory.switchItemsFromChestToPlayer(itemImage, eventData.pointerDrag, chestInventory);
+                            playerInventory.OnChestItemDroppedOnPlayerItem(itemImage, eventData.pointerDrag, chestInventory);
                         }
                         else
                         {
@@ -174,7 +174,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
                                 if (chestItemImage.GetComponent<Image>().sprite != null)
                                 {
                                     // ToDo: switchItemsFromPlayerToChest
-                                    chestInventory.switchItemsFromPlayerToChest(chestItemImage, eventData.pointerDrag);
+                                    chestInventory.onPlayerItemDroppedOnChestItem(chestItemImage, eventData.pointerDrag);
                                 }
                                 else
                                 {
@@ -208,7 +208,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
                             // dropped within itemImage 'itemImage'
                             if (itemImage.GetComponent<Image>().sprite != null)
                             {
-                                playerInventory.switchItems(itemImage, eventData.pointerDrag);
+                                playerInventory.onItemDroppedOnItem(itemImage, eventData.pointerDrag);
                             } else
                             {
                                 // item dropped in an empty tile
