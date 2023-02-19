@@ -541,7 +541,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     /// <param name="itemImage">Inventory tile GO holding an item pic</param>
     /// <param name="followerItemImage"></param>
-    public void switchItems(GameObject itemImage, GameObject followerItemImage)
+    public void onItemDroppedOnItem(GameObject itemImage, GameObject followerItemImage)
     {
         List<Text> childrenTexts = new List<Text>(itemImage.GetComponentsInChildren<Text>());
         Text inventoryItemKey = childrenTexts[1];
@@ -554,40 +554,231 @@ public class Inventory : MonoBehaviour
         InventoryItem item = this.getInventoryItemByItemImageText(inventoryItemKey.text);
         InventoryItem followerItem = this.getInventoryItemByItemImageText(followerItemKey.text);
 
-        if (item != null && followerItem != null)
+        if (item != null && followerItem != null && isNotSameItemSlot(itemImagePos, followerItemImagePos))
         {
             InventoryTile itemSlot = this.slots.Find(slot => findItem(slot, inventoryItemKey, itemImagePos));
 
             InventoryTile followerItemSlot = this.slots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
 
-            List<InventoryTile> slotsCopies = new List<InventoryTile>();
-
-            foreach (InventoryTile slot in this.slots)
+            if (itemsStackable(item, followerItem, itemSlot, followerItemSlot))
             {
-                if (slot == itemSlot)
-                {
-                    /* Loop is at index of 'itemSlot' in 'this.slots',
-                    so set tile pos of 'followerItemSlot' to this index */
-                    followerItemSlot.setTilePos(slotsCopies.Count);
-                    // Then add it to the new slots list
-                    slotsCopies.Add(followerItemSlot);
-                }
-                else if (slot == followerItemSlot)
-                {
-                    /* Loop is at index of 'followerItemSlot' in 'this.slots',
-                     * so set tile pos of 'itemSlot' to this index */
-                    itemSlot.setTilePos(slotsCopies.Count);
-                    // Then add it to the new slots list
-                    slotsCopies.Add(itemSlot);
-                } else
-                {
-                    // Add slot to new slots list
-                    slotsCopies.Add(slot);
-                }
+                this.stackItems(itemSlot, followerItemSlot, followerItemImage);
             }
-            this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+            else
+            {
+                switchPositionOfItems(itemSlot, followerItemSlot);
+            }
         }
+
+
         this.UpdateView();
+    }
+
+    private bool isNotSameItemSlot(Text itemImagePos, Text followerItemImagePos)
+    {
+        return itemImagePos != followerItemImagePos;
+    }
+
+    private void switchPositionOfItems(InventoryTile itemSlot, InventoryTile followerItemSlot)
+    {
+        List<InventoryTile> slotsCopies = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in this.slots)
+        {
+            if (slot == itemSlot)
+            {
+                /* Loop is at index of 'itemSlot' in 'this.slots',
+                so set tile pos of 'followerItemSlot' to this index */
+                followerItemSlot.setTilePos(slotsCopies.Count);
+                // Then add it to the new slots list
+                slotsCopies.Add(followerItemSlot);
+            }
+            else if (slot == followerItemSlot)
+            {
+                /* Loop is at index of 'followerItemSlot' in 'this.slots',
+                 * so set tile pos of 'itemSlot' to this index */
+                itemSlot.setTilePos(slotsCopies.Count);
+                // Then add it to the new slots list
+                slotsCopies.Add(itemSlot);
+            }
+            else
+            {
+                // Add slot to new slots list
+                slotsCopies.Add(slot);
+            }
+        }
+        this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+    }
+
+    private bool itemsStackable(InventoryItem item, InventoryItem followerItem, InventoryTile itemSlot, InventoryTile followerItemSlot)
+    {
+        return isSameKindOfItem(item, followerItem) && itemSlot.getNumberOfItems() < 10 && followerItemSlot.getNumberOfItems() < 10;
+    }
+
+    private bool isSameKindOfItem(InventoryItem item, InventoryItem followerItem)
+    {
+        return item.itemNumber == followerItem.itemNumber;
+    }
+
+    private void stackItems(InventoryTile itemSlot, InventoryTile followerItemSlot, GameObject followerItemImage)
+    {
+        //DragItem dragItemScript = followerItemImage.GetComponent<DragItem>();
+        //UnityEngine.EventSystems.PointerEventData dragEvent = new UnityEngine.EventSystems.PointerEventData()
+        int stackSize = itemSlot.getNumberOfItems() + followerItemSlot.getNumberOfItems(); // <= 18 && >1
+        if (stackSize > 10)
+        {
+            mergeBothStacksIntoTwoStacks(itemSlot, followerItemSlot, stackSize);
+        }
+        else
+        {
+            mergeBothStacksIntoOneStack(itemSlot, followerItemSlot, stackSize);
+        }
+    }
+
+    private void stackItemsOfDifferentInventories(InventoryTile itemSlot, InventoryTile followerItemSlot, GameObject followerItemImage, List<InventoryTile> originInventorySlots)
+    {
+        //DragItem dragItemScript = followerItemImage.GetComponent<DragItem>();
+        //UnityEngine.EventSystems.PointerEventData dragEvent = new UnityEngine.EventSystems.PointerEventData()
+        int stackSize = itemSlot.getNumberOfItems() + followerItemSlot.getNumberOfItems(); // <= 18 && >1
+        if (stackSize > 10)
+        {
+            mergeBothStacksFromDifferentInventoriesIntoTwoStacks(itemSlot, followerItemSlot, stackSize, originInventorySlots);
+        }
+        else
+        {
+            mergeBothStacksFromDifferentInventoriesIntoOneStack(itemSlot, followerItemSlot, stackSize, originInventorySlots);
+        }
+    }
+
+    private void mergeBothStacksIntoOneStack(InventoryTile itemSlot, InventoryTile followerItemSlot, int stackSize)
+    {
+        List<InventoryTile> slotsCopies = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in this.slots)
+        {
+            if (slot == itemSlot)
+            {
+                slot.setStackSize(stackSize);
+                slotsCopies.Add(slot);
+            }
+            else if (slot == followerItemSlot)
+            {
+                itemSlot = new InventoryTile(slot.getTilePos());
+                slotsCopies.Add(itemSlot);
+            }
+            else
+            {
+                // Add slot to new slots list
+                slotsCopies.Add(slot);
+            }
+        }
+        this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+    }
+
+    private void mergeBothStacksFromDifferentInventoriesIntoOneStack(InventoryTile itemSlot, InventoryTile followerItemSlot, int stackSize,
+        List<InventoryTile> originInventorySlots)
+    {
+        List<InventoryTile> slotsCopies = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in this.slots)
+        {
+            if (slot == itemSlot)
+            {
+                slot.setStackSize(stackSize);
+                slotsCopies.Add(slot);
+            }
+            else
+            {
+                // Add slot to new slots list
+                slotsCopies.Add(slot);
+            }
+        }
+        this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+
+        List<InventoryTile> originSlotsCopy = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in this.slots)
+        {
+            if (slot == followerItemSlot)
+            {
+                itemSlot = new InventoryTile(slot.getTilePos());
+                originSlotsCopy.Add(itemSlot);
+            }
+            else
+            {
+                // Add slot to new slots list
+                originSlotsCopy.Add(slot);
+            }
+        }
+        originInventorySlots = getIdenticalCopyOfInventoryTiles(originSlotsCopy);
+    }
+
+    private void mergeBothStacksIntoTwoStacks(InventoryTile itemSlot, InventoryTile followerItemSlot, int stackSize)
+    {
+        // keep followerItemImage in the hand with count = sum - 10 
+        // dragItemScript.OnDrag(UnityEngine.EventSystems.PointerEventData);
+        int maxStackSize = 10;
+        List<InventoryTile> slotsCopies = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in this.slots)
+        {
+            if (slot == itemSlot)
+            {
+                slot.setStackSize(maxStackSize);
+                slotsCopies.Add(slot);
+            }
+            else if (slot == followerItemSlot)
+            {
+                slot.setStackSize(stackSize - maxStackSize);
+                slotsCopies.Add(slot);
+            }
+            else
+            {
+                // Add slot to new slots list
+                slotsCopies.Add(slot);
+            }
+        }
+        this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+    }
+
+    private void mergeBothStacksFromDifferentInventoriesIntoTwoStacks(InventoryTile itemSlot, InventoryTile followerItemSlot, int stackSize, List<InventoryTile> targetSlots)
+    {
+        // keep followerItemImage in the hand with count = sum - 10 
+        // dragItemScript.OnDrag(UnityEngine.EventSystems.PointerEventData);
+        int maxStackSize = 10;
+        List<InventoryTile> slotsCopies = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in this.slots)
+        {
+            if (slot == itemSlot)
+            {
+                slot.setStackSize(maxStackSize);
+                slotsCopies.Add(slot);
+            }
+            else
+            {
+                // Add slot to new slots list
+                slotsCopies.Add(slot);
+            }
+        }
+        this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+
+        List<InventoryTile> targetSlotsCopies = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in targetSlots)
+        {
+            if (slot == followerItemSlot)
+            {
+                slot.setStackSize(stackSize - maxStackSize);
+                targetSlotsCopies.Add(slot);
+            }
+            else
+            {
+                // Add slot to new slots list
+                targetSlotsCopies.Add(slot);
+            }
+        }
+        targetSlots = getIdenticalCopyOfInventoryTiles(targetSlotsCopies);
     }
 
     /// <summary>
@@ -597,7 +788,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     /// <param name="itemImage">Inventory tile GO holding an item pic</param>
     /// <param name="followerItemImage">The image of the dragged player item GO</param>
-    public void switchItemsFromPlayerToChest(GameObject itemImage, GameObject followerItemImage)
+    public void onPlayerItemDroppedOnChestItem(GameObject itemImage, GameObject followerItemImage)
     {
         List<Text> childrenTexts = new List<Text>(itemImage.GetComponentsInChildren<Text>());
         Text inventoryItemKey = childrenTexts[1];
@@ -616,61 +807,87 @@ public class Inventory : MonoBehaviour
             List<InventoryTile> playerSlots = player.GetComponent<Inventory>().slots;
             InventoryTile followerItemSlot = playerSlots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
 
-            List<InventoryTile> slotsCopies = new List<InventoryTile>();
-
-            foreach (InventoryTile slot in this.slots)
+            if (itemsStackable(item, followerItem, itemSlot, followerItemSlot))
             {
-                if (slot.getTilePos() == itemSlot.getTilePos())
-                {
-                    /* Loop is at index of 'itemSlot' in 'this.slots',
-                    so set tile pos of 'followerItemSlot' to this index */
-                    InventoryTile copy = followerItemSlot.getIdenticalCopy();
-                    copy.setTilePos(slotsCopies.Count);
-                    // Then add it to the new slots list
-                    slotsCopies.Add(copy);
-                }
-                else
-                {
-                    // Add slot to new slots list
-                    slotsCopies.Add(slot);
-                }
-            }
-            this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
-
-            List<InventoryTile> playerSlotsCopies = new List<InventoryTile>();
-            playerSlots = player.GetComponent<Inventory>().slots;
-
-            foreach (InventoryTile slot in playerSlots)
+                this.stackItemsOfDifferentInventories(itemSlot, followerItemSlot, followerItemImage, playerSlots);
+            } else
             {
-                if (slot.getTilePos() == followerItemSlot.getTilePos())
-                {
-                    /* Loop is at index of 'followerItemSlot' in 'this.slots',
-                     * so set tile pos of 'itemSlot' to this index */
-                    InventoryTile copy = itemSlot.getIdenticalCopy();
-                    copy.setTilePos(playerSlotsCopies.Count);
-                    // Then add it to the new slots list
-                    playerSlotsCopies.Add(copy);
-                }
-                else
-                {
-                    // Add slot to new slots list
-                    playerSlotsCopies.Add(slot);
-                }
+                switchPositionOfPlayerItemAndChestItem(itemSlot, followerItemSlot);
             }
-            player.GetComponent<Inventory>().slots = getIdenticalCopyOfInventoryTiles(playerSlotsCopies);
         }
         player.GetComponent<Inventory>().UpdateView();
         this.UpdateView();
     }
 
+    private void switchPositionOfPlayerItemAndChestItem(InventoryTile itemSlot, InventoryTile followerItemSlot)
+    {
+        updateThisChestInventorySlots(itemSlot, followerItemSlot);
+
+        updatePlayerInventorySlots(itemSlot, followerItemSlot);
+    }
+
+    private void updateThisChestInventorySlots(InventoryTile itemSlot, InventoryTile followerItemSlot)
+    {
+        List<InventoryTile> slotsCopy = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in this.slots)
+        {
+            if (slot.getTilePos() == itemSlot.getTilePos())
+            {
+                addFollowerItemToSlotsCopy(followerItemSlot, slotsCopy);
+            }
+            else
+            {
+                // Add slot to new slots list
+                slotsCopy.Add(slot);
+            }
+        }
+        this.slots = getIdenticalCopyOfInventoryTiles(slotsCopy);
+    }
+
+    private void addFollowerItemToSlotsCopy(InventoryTile followerItemSlot, List<InventoryTile> slotsCopies)
+    {
+        /* Loop is at index of 'itemSlot' in 'this.slots',
+                        so set tile pos of 'followerItemSlot' to this index */
+        InventoryTile copy = followerItemSlot.getIdenticalCopy();
+        copy.setTilePos(slotsCopies.Count);
+        // Then add it to the new slots list
+        slotsCopies.Add(copy);
+    }
+
+    private void updatePlayerInventorySlots(InventoryTile itemSlot, InventoryTile followerItemSlot)
+    {
+        List<InventoryTile> playerSlotsCopies = new List<InventoryTile>();
+        List<InventoryTile> playerSlots = player.GetComponent<Inventory>().slots;
+
+        foreach (InventoryTile slot in playerSlots)
+        {
+            if (slot.getTilePos() == followerItemSlot.getTilePos())
+            {
+                /* Loop is at index of 'followerItemSlot' in 'this.slots',
+                 * so set tile pos of 'itemSlot' to this index */
+                InventoryTile copy = itemSlot.getIdenticalCopy();
+                copy.setTilePos(playerSlotsCopies.Count);
+                // Then add it to the new slots list
+                playerSlotsCopies.Add(copy);
+            }
+            else
+            {
+                // Add slot to new slots list
+                playerSlotsCopies.Add(slot);
+            }
+        }
+        player.GetComponent<Inventory>().slots = getIdenticalCopyOfInventoryTiles(playerSlotsCopies);
+    }
+
     /// <summary>
     /// Swaps the position of the dropped item (image) with the targeted item (image) of the inventory ui. 
-    /// This method is executed when the user drops an item (image) from the chest inventory on a non-empty tile 
+    /// This method is executed when the user drops an item (image) of the chest inventory on a non-empty tile 
     /// of the player inventory ui.
     /// </summary>
     /// <param name="itemImage">Inventory tile GO holding an item pic</param>
     /// <param name="followerItemImage">The image of the dragged chest item GO</param>
-    public void switchItemsFromChestToPlayer(GameObject itemImage, GameObject followerItemImage, Inventory chestInventory)
+    public void OnChestItemDroppedOnPlayerItem(GameObject itemImage, GameObject followerItemImage, Inventory chestInventory)
     {
         List<Text> childrenTexts = new List<Text>(itemImage.GetComponentsInChildren<Text>());
         Text inventoryItemKey = childrenTexts[1];
@@ -689,51 +906,71 @@ public class Inventory : MonoBehaviour
             List<InventoryTile> chestSlots = chestInventory.slots;
             InventoryTile followerItemSlot = chestSlots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
 
-            List<InventoryTile> slotsCopies = new List<InventoryTile>();
-
-            foreach (InventoryTile slot in this.slots)
+            if (itemsStackable(item, followerItem, itemSlot, followerItemSlot))
             {
-                if (slot.getTilePos() == itemSlot.getTilePos())
-                {
-                    /* Loop is at index of 'itemSlot' in 'this.slots',
-                    so set tile pos of 'followerItemSlot' to this index */
-                    InventoryTile copy = followerItemSlot.getIdenticalCopy();
-                    copy.setTilePos(slotsCopies.Count);
-                    // Then add it to the new slots list
-                    slotsCopies.Add(copy);
-                }
-                else
-                {
-                    // Add slot to new slots list
-                    slotsCopies.Add(slot);
-                }
+                this.stackItemsOfDifferentInventories(itemSlot, followerItemSlot, followerItemImage, chestSlots);
             }
-            this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
-
-            List<InventoryTile> chestSlotsCopies = new List<InventoryTile>();
-            chestSlots = chestInventory.slots;
-
-            foreach (InventoryTile slot in chestSlots)
+            else
             {
-                if (slot.getTilePos() == followerItemSlot.getTilePos())
-                {
-                    /* Loop is at index of 'followerItemSlot' in 'this.slots',
-                     * so set tile pos of 'itemSlot' to this index */
-                    InventoryTile copy = itemSlot.getIdenticalCopy();
-                    copy.setTilePos(chestSlotsCopies.Count);
-                    // Then add it to the new slots list
-                    chestSlotsCopies.Add(copy);
-                }
-                else
-                {
-                    // Add slot to new slots list
-                    chestSlotsCopies.Add(slot);
-                }
+                switchPositionOfChestItemAndPlayerItem(chestInventory, itemSlot, followerItemSlot);
             }
-            chestInventory.slots = getIdenticalCopyOfInventoryTiles(chestSlotsCopies);
         }
         chestInventory.UpdateView();
         this.UpdateView();
+    }
+
+    private void switchPositionOfChestItemAndPlayerItem(Inventory chestInventory, InventoryTile itemSlot, InventoryTile followerItemSlot)
+    {
+        updateThisPlayerInventorySlots(itemSlot, followerItemSlot);
+        updateChestInventorySlots(chestInventory, itemSlot, followerItemSlot);
+    }
+
+    private void updateThisPlayerInventorySlots(InventoryTile itemSlot, InventoryTile followerItemSlot)
+    {       
+        List<InventoryTile> slotsCopies = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in this.slots)
+        {
+            if (slot.getTilePos() == itemSlot.getTilePos())
+            {
+                addFollowerItemToSlotsCopy(followerItemSlot, slotsCopies);
+            }
+            else
+            {
+                // Add slot to new slots list
+                slotsCopies.Add(slot);
+            }
+        }
+        this.slots = getIdenticalCopyOfInventoryTiles(slotsCopies);
+    }
+
+    private void updateChestInventorySlots(Inventory chestInventory, InventoryTile itemSlot, InventoryTile followerItemSlot)
+    {
+        List<InventoryTile> chestSlotsCopy = new List<InventoryTile>();
+
+        foreach (InventoryTile slot in chestInventory.slots)
+        {
+            if (slot.getTilePos() == followerItemSlot.getTilePos())
+            {
+                addItemToChestSlotsCopy(itemSlot, chestSlotsCopy);
+            }
+            else
+            {
+                // Add slot to new slots list
+                chestSlotsCopy.Add(slot);
+            }
+        }
+        chestInventory.slots = getIdenticalCopyOfInventoryTiles(chestSlotsCopy);
+    }
+
+    private void addItemToChestSlotsCopy(InventoryTile itemSlot, List<InventoryTile> chestSlotsCopies)
+    {
+        /* Loop is at index of 'followerItemSlot' in 'this.slots',
+                         * so set tile pos of 'itemSlot' to this index */
+        InventoryTile copy = itemSlot.getIdenticalCopy();
+        copy.setTilePos(chestSlotsCopies.Count);
+        // Then add it to the new slots list
+        chestSlotsCopies.Add(copy);
     }
 
     private List<InventoryTile> getIdenticalCopyOfInventoryTiles(List<InventoryTile> tiles)
