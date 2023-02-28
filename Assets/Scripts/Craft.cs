@@ -202,7 +202,7 @@ public class Craft : MonoBehaviour {
         //{
             foreach (InventoryTile slot in playerInventory.slots)
             {
-                if (slot.getInventoryItem() != null && ip.ingredient1 == slot.getInventoryItem().itemNumber)
+                if (slot.getInventoryItem() != null && ip.ingredient1 == slot.getInventoryItem().itemKindNumber)
                 {
                     //richtiges Item im Inventar gefunden
 
@@ -219,7 +219,7 @@ public class Craft : MonoBehaviour {
                                 return IsInventoryNotFull(craftingChain, ip);
                             }
 
-                            if (slot2.getInventoryItem() != null && ip.ingredient2 == slot2.getInventoryItem().itemNumber)
+                            if (slot2.getInventoryItem() != null && ip.ingredient2 == slot2.getInventoryItem().itemKindNumber)
                             {
                                 //richtiges Item im Inventar gefunden
                                 if (ip.units2 <= slot2.getNumberOfItems())
@@ -234,7 +234,7 @@ public class Craft : MonoBehaviour {
                                             return IsInventoryNotFull(craftingChain, ip);
                                         }
 
-                                        if (slot3.getInventoryItem() != null && ip.ingredient3 == slot3.getInventoryItem().itemNumber)
+                                        if (slot3.getInventoryItem() != null && ip.ingredient3 == slot3.getInventoryItem().itemKindNumber)
                                         {
                                             //richtiges Item im Inventar gefunden
                                             if (ip.units3 <= slot3.getNumberOfItems())

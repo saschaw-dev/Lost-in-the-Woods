@@ -73,7 +73,7 @@ public class ItemUse : MonoBehaviour {
             {
                 hitGO.GetComponent<WolfAI>().getWeaponDamage(ip);
             }
-            if (hitGO.GetComponent<WolfAI>() != null && ip.itemNumber == 7 && wolfAnimator.GetBool("isDying"))
+            if (hitGO.GetComponent<WolfAI>() != null && ip.itemKindNumber == 7 && wolfAnimator.GetBool("isDying"))
             {
                 // Wolf kann man nur mit dem Steinmesser abbauen
                 hitGO.GetComponent<WolfAI>().getBlockDamage(ip);
@@ -82,7 +82,7 @@ public class ItemUse : MonoBehaviour {
             {
                 hitGO.GetComponent<WildBoarAI>().getWeaponDamage(ip);
             }
-            if (hitGO.GetComponent<WildBoarAI>() != null && ip.itemNumber == 7 && boarAnimator.GetBool("isDying"))
+            if (hitGO.GetComponent<WildBoarAI>() != null && ip.itemKindNumber == 7 && boarAnimator.GetBool("isDying"))
             {
                 // Wildschwein kann man nur mit dem Steinmesser abbauen
                 hitGO.GetComponent<WildBoarAI>().getBlockDamage(ip);
@@ -94,7 +94,7 @@ public class ItemUse : MonoBehaviour {
                     hitGO.GetComponent<DeerAI>().getWeaponDamage(ip);
                 }
             }
-            if (hitGO.GetComponent<DeerAI>() != null && ip.itemNumber == 7 && deerAnimator.GetBool("isDying"))
+            if (hitGO.GetComponent<DeerAI>() != null && ip.itemKindNumber == 7 && deerAnimator.GetBool("isDying"))
             {
                 // Reh kann man nur mit dem Steinmesser abbauen
                 hitGO.GetComponent<DeerAI>().getBlockDamage(ip);

@@ -32,7 +32,7 @@ public class InventoryTile
         this.isEmptyTile = false;
     }
 
-    // An inventory tile equals another inventory tile if they have the same item number and item position
+    // An inventory tile equals another inventory tile if they have the same item number and tile position
     public override bool Equals(Object obj)
     {
         //Check for null and compare run-time types.
@@ -43,7 +43,7 @@ public class InventoryTile
         else
         {
             return (this.tilePos == ((InventoryTile) obj).getTilePos()) && 
-                (this.getInventoryItem().itemNumber == ((InventoryTile)obj).getInventoryItem().itemNumber);
+                (this.getInventoryItem().itemKindNumber == ((InventoryTile)obj).getInventoryItem().itemKindNumber);
         }
     }
 
@@ -80,6 +80,12 @@ public class InventoryTile
     /// True means that this tile is empty. False means that there are pieces of an item in it.
     /// </summary>
     private bool isEmptyTile = true;
+
+    /// <summary>
+    /// Flag indicating whether this tile contains an item that is in the player hand.
+    /// True means that this tile holds the hand item.
+    /// </summary>
+    private bool containsHandItem = false;
 
     /// <summary>
     /// Getter for <code>this.inventoryItem</code>
@@ -144,7 +150,7 @@ public class InventoryTile
             this.inventoryItem = ip;
             this.isEmptyTile = false;
         }
-        if (ip.itemNumber != this.inventoryItem.itemNumber)
+        if (ip.itemKindNumber != this.inventoryItem.itemKindNumber)
         {
             // Wrong item type
             throw new ArgumentException();
@@ -165,7 +171,7 @@ public class InventoryTile
     /// True indicating that removing was successfull and false indicating that it was not.</returns>
     public bool removeOneItem(InventoryItem ip)
     {
-        if (ip.itemNumber != this.inventoryItem.itemNumber)
+        if (ip.itemKindNumber != this.inventoryItem.itemKindNumber)
         {
             // Wrong item type
             throw new ArgumentException();
@@ -200,6 +206,16 @@ public class InventoryTile
     public bool getIsEmptyTile()
     {
         return this.isEmptyTile;
+    }
+
+    public bool getContainsHandItem()
+    {
+        return this.containsHandItem;
+    }
+
+    public void setContainsHandItem(bool containsHandItem)
+    {
+        this.containsHandItem = containsHandItem;
     }
 
     /// <summary>

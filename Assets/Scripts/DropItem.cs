@@ -92,7 +92,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
             if (!RectTransformUtility.RectangleContainsScreenPoint(myRectTransform, Input.mousePosition, null))
             {
                 // Aus der Hand entfernen
-                playerInventory.AddItemToYourHand(ip);
+                RemoveItemFromHand(ip);
             }
         }
         else if (eventData.pointerDrag.CompareTag("chestImage"))
@@ -128,6 +128,16 @@ public class DropItem : MonoBehaviour, IDropHandler {
                 {
                     if (RectTransformUtility.RectangleContainsScreenPoint(itemImage.GetComponent<RectTransform>(), Input.mousePosition, null))
                     {
+                        if (!playerInventory.isHandEmpty())
+                        {
+                            if (playerInventory.disableContainsHandItemIfHandItem(itemImage))
+                            {
+                                List<Text> childrenTexts = new List<Text>(itemImage.GetComponentsInChildren<Text>());
+                                Text itemText = childrenTexts[1];
+                                ip = playerInventory.getInventoryItemByItemImageText(itemText.text);
+                                playerInventory.AddItemToYourHand(ip);
+                            }
+                        }
                         if (itemImage.GetComponent<Image>().sprite != null)
                         {
                             // ToDo: switchItemsFromChestToPlayer
@@ -153,7 +163,7 @@ public class DropItem : MonoBehaviour, IDropHandler {
             // Innerhalb des Hand-Slots gedroppt?
             if (RectTransformUtility.RectangleContainsScreenPoint(myRectTransform, Input.mousePosition, null))
             {
-                playerInventory.AddItemToYourHand(ip);
+                AddItemToHand(eventData, ip);
                 // Packe Key in den Hand-Slot
                 gameObject.transform.GetChild(1).GetComponent<Text>().enabled = true;
                 gameObject.transform.GetChild(1).GetComponent<Text>().text = itemKey;
@@ -171,6 +181,13 @@ public class DropItem : MonoBehaviour, IDropHandler {
                         {
                             if (RectTransformUtility.RectangleContainsScreenPoint(chestItemImage.GetComponent<RectTransform>(), Input.mousePosition, null))
                             {
+                                if(!playerInventory.isHandEmpty())
+                                {
+                                    if(playerInventory.disableContainsHandItemIfHandItem(eventData.pointerDrag))
+                                    {
+                                        playerInventory.AddItemToYourHand(ip);
+                                    }
+                                }
                                 if (chestItemImage.GetComponent<Image>().sprite != null)
                                 {
                                     // ToDo: switchItemsFromPlayerToChest
@@ -190,10 +207,14 @@ public class DropItem : MonoBehaviour, IDropHandler {
                     else
                     {
                         // außerhalb der Truhe und außerhalb des Inventars gedroppt 
-                        if (playerInventory.isHandEmpty())
+                        if (!playerInventory.isHandEmpty())
                         {
-                            playerInventory.DropFromInventory(ip);
+                            if(playerInventory.disableContainsHandItemIfHandItem(eventData.pointerDrag))
+                            {
+                                playerInventory.AddItemToYourHand(ip);
+                            }
                         }
+                        playerInventory.DropFromInventory(ip);
                     }
                 } else
                 {
@@ -221,6 +242,18 @@ public class DropItem : MonoBehaviour, IDropHandler {
                 }
             }
         }       
+    }
+
+    private void AddItemToHand(PointerEventData eventData, InventoryItem ip)
+    {
+        playerInventory.updateContainsHandItemForHandItemSlot(eventData.pointerDrag, gameObject);
+        playerInventory.AddItemToYourHand(ip);
+    }
+
+    private void RemoveItemFromHand(InventoryItem ip)
+    {
+        playerInventory.disableContainsHandItemInInventory();
+        playerInventory.AddItemToYourHand(ip);
     }
 
     private bool isInChestRectTransform()

@@ -398,7 +398,7 @@ public class Player : MonoBehaviour
                 AudioSource.PlayClipAtPoint(jumpSound, gameObject.transform.position);
             }   
         }
-        Debug.Log(controller.isGrounded ? "GROUNDED" : "NOT GROUNDED");
+        // Debug.Log(controller.isGrounded ? "GROUNDED" : "NOT GROUNDED");
         controller.Move(moveDirection * Time.deltaTime);
     }
 
