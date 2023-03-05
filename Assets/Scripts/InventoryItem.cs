@@ -26,7 +26,7 @@ public class InventoryItem : ScriptableObject
 
 
     //Kennung
-    public int itemNumber;
+    public int itemKindNumber;
 
     //Crafting Rezept
     public float craftingSpeed = 0f;

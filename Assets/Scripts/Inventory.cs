@@ -8,6 +8,7 @@ public class Inventory : MonoBehaviour
 {
     public GameObject[] itemImageSlots = new GameObject[10]; // itemImageSlots sind nicht die Kacheln selbst, sondern das weiße GO darüber!
     public List<InventoryTile> slots = new List<InventoryTile>();
+    public InventoryItem handItem;
     private GameObject player;
     GameObject inventoryPanel;
     GameObject chestPanel;
@@ -217,7 +218,7 @@ public class Inventory : MonoBehaviour
                 if (slot.getInventoryItem() != null)
                 {
                     currentItemImage.sprite = slot.getInventoryItem().sprite;
-                    itemKeys[i].GetComponent<Text>().text = slot.getInventoryItem().itemNumber.ToString();
+                    itemKeys[i].GetComponent<Text>().text = slot.getInventoryItem().itemKindNumber.ToString();
                 }
                 // Set item image pos
                 //if (gameObject != GameObject.Find("Chest"))
@@ -298,7 +299,7 @@ public class Inventory : MonoBehaviour
         {
             foreach (InventoryTile slot in slots)
             {
-                if (slot.getInventoryItem() != null && slot.getInventoryItem().itemNumber == ip.itemNumber && !slot.isInventorySlotFull())
+                if (slot.getInventoryItem() != null && slot.getInventoryItem().itemKindNumber == ip.itemKindNumber && !slot.isInventorySlotFull())
                 {
                     slot.addOneItem(ip);
                     UpdateView();
@@ -317,7 +318,7 @@ public class Inventory : MonoBehaviour
         // If there are only full inventory tiles with this 'ip' remove from the last full tile
         foreach (InventoryTile slot in slots)
         {
-            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemNumber == ip.itemNumber)
+            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemKindNumber == ip.itemKindNumber)
             {
                 if (slot.isInventorySlotFull())
                 {
@@ -365,7 +366,7 @@ public class Inventory : MonoBehaviour
     {
         foreach(InventoryTile slot in slots)
         {
-            if (slot.getInventoryItem() != null && (slot.getInventoryItem().itemNumber == ip.itemNumber && !slot.isInventorySlotFull()))
+            if (slot.getInventoryItem() != null && (slot.getInventoryItem().itemKindNumber == ip.itemKindNumber && !slot.isInventorySlotFull()))
             {
                 return true;
             }
@@ -430,20 +431,94 @@ public class Inventory : MonoBehaviour
 
     public bool isHandEmpty()
     {
-        if (InventoryItem.lastEquiped == false)
-        {
-            if (tip.GetComponent<Text>().enabled)
-            {
-                tip.GetComponent<Text>().enabled = false;
-            }
+        return !InventoryItem.lastEquiped;
+    }
 
-            return true;
-        } else
+    public bool disableContainsHandItemIfHandItem(GameObject followerItemImage)
+    {
+        InventoryTile followerItemSlot = getInventoryTileByItemImageGO(followerItemImage);
+        bool isHandItem = false; 
+
+        if(isHandItemSlot(followerItemSlot))
         {
-            tip.GetComponent<Text>().enabled = true;
-            tip.GetComponent<Text>().text = "Wenn du ein Gegenstand ausgerüstet hast, kannst du nichts droppen lassen!";
-            return false;
+            disableContainsHandItemForSlot(followerItemSlot);
+            isHandItem = true;
         }
+        return isHandItem;
+    }
+
+    public void disableContainsHandItemInInventory()
+    {
+        disableContainsHandItemForSlot(getInventoryTileThatContainsHandItem());
+    }
+
+    private void disableContainsHandItemForSlot(InventoryTile itemSlot)
+    {
+        foreach (InventoryTile slot in slots)
+        {
+            if (slot == itemSlot)
+            {
+                slot.setContainsHandItem(false);
+            }
+        }
+    }
+
+    public void updateContainsHandItemForHandItemSlot(GameObject followerItemImage, GameObject handItemSlot) {
+        disableContainsHandItemForSlot(getInventoryTileThatContainsHandItem());
+        enableContainsHandItemInInventory(followerItemImage);
+    }
+
+    public void enableContainsHandItemInInventory(GameObject followerItemImage)
+    {
+        enableContainsHandItemForSlot(getInventoryTileByItemImageGO(followerItemImage));
+    }
+
+    private void enableContainsHandItemForSlot(InventoryTile followerItemSlot)
+    {
+        foreach (InventoryTile slot in slots)
+        {
+            if (slot == followerItemSlot)
+            {
+                slot.setContainsHandItem(true);
+            }
+        }
+    }
+
+    private InventoryTile getInventoryTileThatContainsHandItem()
+    {
+        foreach (InventoryTile slot in slots)
+        {
+            if (slot.getContainsHandItem())
+            {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    private bool isHandItemSlot(InventoryTile followerItemSlot)
+    {
+        bool isHandItemSlot = false;
+        foreach (InventoryTile slot in slots)
+        {
+            if (slot == followerItemSlot)
+            {
+                if (slot.getContainsHandItem())
+                {
+                    isHandItemSlot = true;
+                }
+            }
+        }
+        return isHandItemSlot;
+    }
+
+    private InventoryTile getInventoryTileByItemImageGO(GameObject followerItemImage)
+    {
+        List<Text> childrenTexts2 = new List<Text>(followerItemImage.GetComponentsInChildren<Text>());
+        Text followerItemKey = childrenTexts2[1];
+        Text followerItemImagePos = childrenTexts2[2];
+
+        return this.slots.Find(slot => findItem(slot, followerItemKey, followerItemImagePos));
     }
 
     public void HideTipText()
@@ -459,7 +534,7 @@ public class Inventory : MonoBehaviour
         InventoryItem invItemWithNumber = null;
         foreach (InventoryTile slot in slots)
         {
-            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemNumber.ToString() == itemImageText)
+            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemKindNumber.ToString() == itemImageText)
             {
                 invItemWithNumber = slot.getInventoryItem();
             }
@@ -472,7 +547,7 @@ public class Inventory : MonoBehaviour
         InventoryItem invItemWithNumber = null;
         foreach (InventoryTile slot in this.slots)
         {
-            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemNumber.ToString() == itemImageText)
+            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemKindNumber.ToString() == itemImageText)
             {
                 invItemWithNumber = slot.getInventoryItem();
             }
@@ -502,7 +577,7 @@ public class Inventory : MonoBehaviour
     {
         foreach(InventoryTile slot in this.slots)
         {
-            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemNumber == ip.itemNumber)
+            if (slot.getInventoryItem() != null && slot.getInventoryItem().itemKindNumber == ip.itemKindNumber)
             {
                 return true;
             }
@@ -522,7 +597,7 @@ public class Inventory : MonoBehaviour
         {
             foreach (InventoryTile slot in this.slots)
             {
-                if (slot.getInventoryItem().itemNumber == ip.itemNumber && !slot.isInventorySlotFull())
+                if (slot.getInventoryItem().itemKindNumber == ip.itemKindNumber && !slot.isInventorySlotFull())
                 {
                     return false;
                 }
@@ -590,6 +665,8 @@ public class Inventory : MonoBehaviour
                 /* Loop is at index of 'itemSlot' in 'this.slots',
                 so set tile pos of 'followerItemSlot' to this index */
                 followerItemSlot.setTilePos(slotsCopies.Count);
+                // Also overwrite marker for slot containing the hand item
+                followerItemSlot.setContainsHandItem(slot.getContainsHandItem());
                 // Then add it to the new slots list
                 slotsCopies.Add(followerItemSlot);
             }
@@ -598,6 +675,7 @@ public class Inventory : MonoBehaviour
                 /* Loop is at index of 'followerItemSlot' in 'this.slots',
                  * so set tile pos of 'itemSlot' to this index */
                 itemSlot.setTilePos(slotsCopies.Count);
+                itemSlot.setContainsHandItem(slot.getContainsHandItem());
                 // Then add it to the new slots list
                 slotsCopies.Add(itemSlot);
             }
@@ -617,7 +695,7 @@ public class Inventory : MonoBehaviour
 
     private bool isSameKindOfItem(InventoryItem item, InventoryItem followerItem)
     {
-        return item.itemNumber == followerItem.itemNumber;
+        return item.itemKindNumber == followerItem.itemKindNumber;
     }
 
     private void stackItems(InventoryTile itemSlot, InventoryTile followerItemSlot, GameObject followerItemImage)
@@ -1061,7 +1139,7 @@ public class Inventory : MonoBehaviour
     private bool findItem(InventoryTile slot, Text followerItemKey, Text itemImagePos)
     {
         if (slot.getInventoryItem() != null) {
-            if (slot.getInventoryItem().itemNumber.ToString().Equals(followerItemKey.text))
+            if (slot.getInventoryItem().itemKindNumber.ToString().Equals(followerItemKey.text))
             {
                 if (itemImagePos.text.Equals(slot.getTilePos().ToString()))
                 {

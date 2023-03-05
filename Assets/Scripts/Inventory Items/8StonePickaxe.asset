@@ -24,7 +24,7 @@ MonoBehaviour:
   useAnimation: {fileID: 0}
   useAnima: {fileID: 7400000, guid: ae5f3c24f36486c42bc1177a9877f778, type: 2}
   useSound: {fileID: 0}
-  itemNumber: 8
+  itemKindNumber: 8
   craftingSpeed: 10
   craftingText: '5 wood
 

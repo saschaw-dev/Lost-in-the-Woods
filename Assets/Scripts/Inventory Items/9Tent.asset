@@ -24,7 +24,7 @@ MonoBehaviour:
   useAnimation: {fileID: 0}
   useAnima: {fileID: 0}
   useSound: {fileID: 0}
-  itemNumber: 9
+  itemKindNumber: 9
   craftingSpeed: 18
   craftingText: '5 fiber
 

@@ -40,31 +40,31 @@ public class Build : MonoBehaviour {
 	void Update () {
 		if(this.isBuildModeOn && cursorBlock != null)
         {
-            if (currentItem.itemNumber == 12)
+            if (currentItem.itemKindNumber == 12)
             {
                 FindWallPos();
             }
-            if (currentItem.itemNumber == 13)
+            if (currentItem.itemKindNumber == 13)
             {
                 FindFoundationFloorTileChestPos();
             }
-            if (currentItem.itemNumber == 14)
+            if (currentItem.itemKindNumber == 14)
             {
                 FindFoundationFloorTileChestPos();
             }
-            if (currentItem.itemNumber == 15)
+            if (currentItem.itemKindNumber == 15)
             {
                 FindRoofPos();
             }
-            if (currentItem.itemNumber == 16)
+            if (currentItem.itemKindNumber == 16)
             {
                 FindDoorWallPos();
             }
-            if (currentItem.itemNumber == 17)
+            if (currentItem.itemKindNumber == 17)
             {
                 FindFoundationFloorTileChestPos();
             }
-            if (currentItem.itemNumber == 18)
+            if (currentItem.itemKindNumber == 18)
             {
                 FindFoundationFloorTileChestPos();
             }
@@ -104,7 +104,7 @@ public class Build : MonoBehaviour {
     {
         cursorBlock = (GameObject) Instantiate(this.currentItem.prefab, new Vector3(0,0,0), this.player.transform.localRotation);
 
-        if (currentItem.itemNumber == 16)
+        if (currentItem.itemKindNumber == 16)
         {
             for (int i = 0; i < this.cursorBlock.GetComponentsInChildren<Collider>().Length; i++)
             {
@@ -296,7 +296,7 @@ public class Build : MonoBehaviour {
         block = (GameObject)Instantiate(currentItem.prefab, cursorBlock.transform.position, cursorBlock.transform.localRotation);
 
         // Handelt es sich um eine Truhe?
-        if (currentItem.itemNumber == 17)
+        if (currentItem.itemKindNumber == 17)
         {
             // Dann instanziere zusätzlich ein Truhen-UI und setze wichtige Variablen!
             //instantiateChestUI(block);

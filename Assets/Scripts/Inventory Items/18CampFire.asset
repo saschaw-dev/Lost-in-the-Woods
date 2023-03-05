@@ -24,7 +24,7 @@ MonoBehaviour:
   useAnimation: {fileID: 0}
   useAnima: {fileID: 0}
   useSound: {fileID: 0}
-  itemNumber: 18
+  itemKindNumber: 18
   craftingSpeed: 8
   craftingText: 8 wood
   ingredient1: 10
