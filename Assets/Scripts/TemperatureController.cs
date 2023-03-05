@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UIElements;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 // Klasse regelt die Temperatur des Spielers //
 
@@ -33,7 +31,9 @@ public class TemperatureController : MonoBehaviour {
         thermoGO = GameObject.Find("ThermoFill");
         thermoImage = thermoGO.GetComponent<Image>();
         thermoFill = GameObject.Find("ThermoFill").GetComponent<Image>();
-        dayAndNightControl = dayAndNightControllerGo.GetComponent<DayAndNightControl>();
+        if (dayAndNightControllerGo != null) {
+            dayAndNightControl = dayAndNightControllerGo.GetComponent<DayAndNightControl>();
+        }
         playerScript = GameObject.Find("Player").GetComponent<Player>();
 	}
 	
@@ -71,7 +71,7 @@ public class TemperatureController : MonoBehaviour {
             {
                 temperatureIncrease = 0;
             }
-            if (dayAndNightControl.isCurrentlyNight())
+            if (dayAndNightControl != null && dayAndNightControl.isCurrentlyNight())
             {
                 nightFreeze = 0.5f;
             } else
