@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class CricketSound : NightSound
 {
+    GameObject dayAndNightController;
+    
     // Use this for initialization
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        dayAndNightControl = GameObject.Find("Day and Night Controller").GetComponent<DayAndNightControl>();
+        dayAndNightController = GameObject.Find("Day and Night Controller");
+        if(dayAndNightController != null) {
+            dayAndNightControl = dayAndNightController.GetComponent<DayAndNightControl>();
+        }
         base.waitTimeInSeconds = 10f;
         base.StartCoroutine("playSoundEffectInLoop");
     }

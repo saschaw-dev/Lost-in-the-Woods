@@ -21,7 +21,7 @@ public class NightSound : MonoBehaviour {
     protected IEnumerator playSoundEffectInLoop()
     {
         // Ist es entweder Nacht oder Mitternacht?
-        if (dayAndNightControl.isCurrentlyNight())
+        if (dayAndNightControl != null && dayAndNightControl.isCurrentlyNight())
         {
             // Dann spiele Nachtgeräuche
             audioSource.Play();
