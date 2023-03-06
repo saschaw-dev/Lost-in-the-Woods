@@ -15,18 +15,16 @@ public class CampFire : MonoBehaviour {
     Image handCursor;
     Image crosshairImage;
     Transform crosshairPos;
-    Light light;
+    Light fireLight;
     GameObject player;
     PlayerHealth playerHealth;
     Player playerScript;
     public AudioClip getDamageSound;
-    public AudioClip fireHitSound;
     public bool isFireOn = false;
     bool isPlayingDmgSound = false;
     Image warmIcon;
     Color transparent;
     Color notTransparent;
-    bool isInArea = false;
 
     private void Awake()
     {
@@ -41,11 +39,11 @@ public class CampFire : MonoBehaviour {
     // Use this for initialization
     void Start () {
         audioSource = GetComponent<AudioSource>();
-        light = GetComponentInChildren<Light>();
+        fireLight = GetComponentInChildren<Light>();
         fireEffect = gameObject.GetComponentInChildren<ParticleSystem>();
         warmIcon = GameObject.Find("Warm").GetComponent<Image>();
         fireEffect.Stop();
-        light.enabled = false;
+        fireLight.enabled = false;
         playerScript = player.GetComponent<Player>();
         transparent.a = 0.35f;
         notTransparent = new Color(1f, 1f, 1f, 1f);
@@ -63,7 +61,7 @@ public class CampFire : MonoBehaviour {
     {
         fireEffect.Play();
         audioSource.Play();
-        light.enabled = true;
+        fireLight.enabled = true;
         playerScript.isInWarmingArea = true;
         warmIcon.color = notTransparent;
     }
@@ -72,7 +70,7 @@ public class CampFire : MonoBehaviour {
     {
         fireEffect.Stop();
         audioSource.Stop();
-        light.enabled = false;
+        fireLight.enabled = false;
         playerScript.isInWarmingArea = false;
         warmIcon.color = transparent;
     }
@@ -112,7 +110,6 @@ public class CampFire : MonoBehaviour {
         if (other.gameObject == player && isFireOn)
         {
             playerScript.setIsInFire(true);
-            isInArea = true;
         }
     }
 
@@ -121,7 +118,6 @@ public class CampFire : MonoBehaviour {
         if (other.gameObject == player)
         {
             playerScript.setIsInFire(false);
-            isInArea = false;
         }
     }
 

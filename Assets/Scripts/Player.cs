@@ -51,7 +51,6 @@ public class Player : MonoBehaviour
     public Ray ray2;
     ////////////////////////////////////////////////
     private bool isRunning = false;
-    float run = 0.5F;
     private float xRotate, yRotate;
     //Dauer zwischen den Schritten
     float stepLength = 0.3F;
@@ -62,7 +61,6 @@ public class Player : MonoBehaviour
     Quaternion rotation;
     GameObject mainCamera;
     Camera myCamera;
-    Ray ray;
     private bool isIndoor = false; // Read-only
     private bool isInFire = false; // Read-only
     Image indoorIcon;
@@ -259,7 +257,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    InventoryItem prev = null;
     GameObject prevGameObject = null;
     GameObject currentGameObject = null;
     private RaycastHit hit;
