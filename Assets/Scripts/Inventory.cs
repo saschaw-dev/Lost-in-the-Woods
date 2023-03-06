@@ -8,37 +8,20 @@ public class Inventory : MonoBehaviour
 {
     public GameObject[] itemImageSlots = new GameObject[10]; // itemImageSlots sind nicht die Kacheln selbst, sondern das weiße GO darüber!
     public List<InventoryTile> slots = new List<InventoryTile>();
-    public InventoryItem handItem;
     private GameObject player;
     GameObject inventoryPanel;
     GameObject chestPanel;
-    private GameObject craftingPanel;
-    private GameObject craftingErrorObject;
-    public GameObject[] craftingItemPics = new GameObject[4]; //Item Bilder im Crafting Menue
-    public bool switcher = false; //Bool für (Inventar/Mauszeiger) ein und ausblenden
-    private int itemCount;     //für das Stapeln der Items
-    PickableObject obj;
-    Vector3 dropPosVec = new Vector3(0, 0, 0);
     GameObject dropPos;
     public Image handImage;
     PlayerHealth playerHealth;
-    Text craftingErrorText;
-    public AudioClip error;
-    public AudioClip craftingSound;
     public Image currentItemImage;
-    private int itemStackSize = 10; // Stapelgröße für Items
-    Text tipLabelText;
-    Text tipLabelText2;
     Player playerScript;
     public GameObject[] itemKeys = new GameObject[10]; // Ordnet jedem ItemImage das InventoryItem zu
-    Text itemKeyText;
     Build buildScript;
     GameObject itemLabel;
     Text itemFrameText;
     GameObject tip;
     GameObject itemImageFollower;
-    RaycastHit hit;
-    Ray ray;
     Transform crosshairPos;
     Image crosshairImage;
     Image handCursor;

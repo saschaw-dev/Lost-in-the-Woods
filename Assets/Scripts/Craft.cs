@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,7 +59,8 @@ public class Craft : MonoBehaviour {
             craftableItem.craftingText = craftableItem.craftingText.Replace("NEWLINE", "\n");
         }
         catch(NullReferenceException ex)
-        {   
+        {
+            Debug.Log(ex);   
         }
     }
 	
@@ -331,6 +331,7 @@ public class Craft : MonoBehaviour {
             }
             catch (NullReferenceException ex)
             {
+                Debug.Log(ex);
             }
             mouseIsOver = true;
         }

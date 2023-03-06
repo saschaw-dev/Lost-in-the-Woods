@@ -20,7 +20,6 @@ public class ItemUse : MonoBehaviour {
     Build buildScript;
     Camera myCamera;
     Transform crosshairPos;
-    WaitForSeconds breakTime = new WaitForSeconds(3);
 
     public Animation myAnimation;
     public InventoryItem ip;
@@ -30,7 +29,6 @@ public class ItemUse : MonoBehaviour {
     Animator boarAnimator;
     Animator wolfAnimator;
     bool switcher = false;
-    float timer = 0f;
 
     private void Awake()
     {
